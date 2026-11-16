@@ -81,11 +81,11 @@
 <script>
 // Edit this object each time something changes, then commit. Status values:
 // "done" | "progress" | "blocked" | "todo"
-const LAST_UPDATED = "2026-11-16 06:00 PKT";
+const LAST_UPDATED = "2026-11-16 06:20 PKT";
 
 const tasks = {
   A: [
-    { id: "A1", status: "progress", text: "Repo setup — git, LICENSE, README, .gitignore, this tracker", note: "In progress right now." },
+    { id: "A1", status: "done", text: "Repo setup — git, LICENSE, README, .gitignore, this tracker, public GitHub repo", note: "github.com/m-aoun/voice-agent-research" },
     { id: "A2", status: "todo", text: "Build the RQ2 harness (Ollama-driven, scripted scenarios)" },
     { id: "A3", status: "todo", text: "Run RQ2 experiments across all scenarios/models/modes" },
     { id: "A4", status: "todo", text: "Install Piper TTS, build local STT+LLM+TTS pipeline" },
@@ -115,6 +115,7 @@ const tasks = {
 
 const log = [
   { ts: "2026-11-16 06:00", text: "Project planning finished (PROJECT.md written). Machine specs checked — no bottleneck. git init, LICENSE, README, .gitignore, this tracker created. Starting A1." },
+  { ts: "2026-11-16 06:20", text: "A1 done. Public GitHub repo created and pushed: github.com/m-aoun/voice-agent-research. Starting A2 (RQ2 harness)." },
 ];
 
 const badgeLabel = { done: "DONE", progress: "IN PROGRESS", blocked: "BLOCKED", todo: "NOT STARTED" };
