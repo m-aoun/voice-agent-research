@@ -81,13 +81,13 @@
 <script>
 // Edit this object each time something changes, then commit. Status values:
 // "done" | "progress" | "blocked" | "todo"
-const LAST_UPDATED = "2026-11-16 07:10 PKT";
+const LAST_UPDATED = "2026-11-16 08:05 PKT";
 
 const tasks = {
   A: [
     { id: "A1", status: "done", text: "Repo setup — git, LICENSE, README, .gitignore, this tracker, public GitHub repo", note: "github.com/m-aoun/voice-agent-research" },
     { id: "A2", status: "done", text: "Build the RQ2 harness (Ollama-driven, scripted scenarios)", note: "Verified working end-to-end with llama3:8b — 0 self-dialogue triggers on this small scenario set, so A3 needs more models + more provocative scenarios." },
-    { id: "A3", status: "todo", text: "Run RQ2 experiments across all scenarios/models/modes" },
+    { id: "A3", status: "done", text: "Run RQ2 experiments across all scenarios/models/modes", note: "8 full runs (2 models x 2 temps x 2 modes), 52 turns, 0 errors. Finding: 0/52 triggered the self-dialogue cut — reframes RQ2, see PROJECT.md. Tried pulling the real production model (gpt-oss:20b) to test directly — aborted (13GB, 2+ hr ETA on this connection), cleaned up the partial download." },
     { id: "A4", status: "todo", text: "Install Piper TTS, build local STT+LLM+TTS pipeline" },
     { id: "A5", status: "todo", text: "Run RQ1 latency experiments on the local stack" },
     { id: "A6", status: "todo", text: "Analyze results (heuristic accuracy, latency percentiles)" },
@@ -117,6 +117,7 @@ const log = [
   { ts: "2026-11-16 06:00", text: "Project planning finished (PROJECT.md written). Machine specs checked — no bottleneck. git init, LICENSE, README, .gitignore, this tracker created. Starting A1." },
   { ts: "2026-11-16 06:20", text: "A1 done. Public GitHub repo created and pushed: github.com/m-aoun/voice-agent-research. Starting A2 (RQ2 harness)." },
   { ts: "2026-11-16 07:10", text: "A2 done. src/brain.js adapted from the real receptionist pipeline (zero business-identifying content), research/hallucination_harness.mjs built and test-run against llama3:8b. Worked end-to-end, zero errors. Finding: 0/10 turns triggered the self-dialogue cut with this model on these 5 scenarios — need more models + harder scenarios in A3 to get positive examples for the heuristic's accuracy test." },
+  { ts: "2026-11-16 08:05", text: "A3 done. Added 2 harder scenarios (rambling-caller, rapid-topic-switch) and temperature as a variable. Ran llama3:8b and qwen2.5:7b at temp 0.4 and 0.8, both singleSegment modes — 8 full runs, 52 turns, zero errors. Finding: 0/52 turns triggered the self-dialogue cut, even under stress conditions. Manually verified this is a true negative, not a missed detection. Tried pulling gpt-oss:20b (the real production model) to test directly — download too slow (13GB, 2+hr ETA), aborted and cleaned up the 13GB partial blob. This reframes RQ2: the failure mode may be specific to the production model/provider, not universal. Will discuss framing with Aoun before A7 (writing)." },
 ];
 
 const badgeLabel = { done: "DONE", progress: "IN PROGRESS", blocked: "BLOCKED", todo: "NOT STARTED" };

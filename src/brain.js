@@ -18,6 +18,15 @@ const llmConfig = {
   provider: process.env.LLM_PROVIDER || '',
 };
 
+// Read fresh each call (not baked into llmConfig above) so a harness can
+// loop over several temperatures within one process. Matches the real
+// production value (0.4) by default; the RQ2 experiment also tests a
+// higher temperature as a stress condition more likely to provoke
+// self-dialogue hallucination.
+function currentTemperature() {
+  return process.env.LLM_TEMPERATURE !== undefined ? Number(process.env.LLM_TEMPERATURE) : 0.4;
+}
+
 /** OpenAI-compatible chat completions body every call shares. */
 function llmBody(overrides) {
   const body = {
@@ -146,7 +155,7 @@ export class Brain {
         ...(this.model && !useDefaultModel ? { model: this.model } : {}),
         messages: this.messages,
         stream: true,
-        temperature: 0.4,
+        temperature: currentTemperature(),
         max_tokens: 160,
         frequency_penalty: 0.4,
       })),
