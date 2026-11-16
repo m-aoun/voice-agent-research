@@ -1,0 +1,13 @@
+{
+  "name": "voice-agent-research",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Experiment code for a paper on self-dialogue hallucination detection and latency in cascaded LLM voice agents.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "hallucination-harness": "node research/hallucination_harness.mjs"
+  }
+}

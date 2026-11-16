@@ -176,12 +176,14 @@ Everything is paid in the real world, but we don't need to spend anything:
       2026-11-16** — github.com/m-aoun/voice-agent-research. (The reused
       `Brain`-class logic, fictional clinic profile only, no business
       secrets, moves into A2 since that's where it's actually used.)
-- [ ] **A2.** Build the RQ2 experiment harness — text-only, drives the real
-      `Brain` class with scripted multi-turn caller scenarios (booking,
-      insurance question, reschedule, angry caller, ambiguous multi-ask —
-      already drafted once, rebuild cleanly in the new repo), across Ollama
-      models, both `singleSegment: true/false`. No Twilio/Deepgram/Cartesia/DB
-      needed for this part.
+- [x] **A2.** Build the RQ2 experiment harness. **Done 2026-11-16** —
+      `src/brain.js` (adapted from the real receptionist pipeline, zero
+      business-identifying content) + `research/hallucination_harness.mjs`,
+      5 scenarios, test-run against `llama3:8b` end-to-end, zero errors.
+      **Finding:** 0/10 turns triggered the self-dialogue cut on this small
+      run — A3 needs more models (`qwen2.5:7b` at least) and likely harder/
+      longer scenarios to get positive examples to test the heuristic
+      against.
 - [ ] **A3.** Run the harness across all scenarios × models × both modes.
       Produce raw transcript JSON logs for hand-labeling.
 - [ ] **A4.** Install Piper TTS locally; build a local STT+LLM+TTS
@@ -310,6 +312,6 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-16): A1 done.** Public GitHub repo live at
-github.com/m-aoun/voice-agent-research. Next action: **A2** (build the RQ2
+**Current status (2026-11-16): A1 and A2 done.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research. Next action: **A3** (run the RQ2
 harness). Check `status.html` for the live-updated task-by-task picture.
