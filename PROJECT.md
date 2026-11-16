@@ -171,10 +171,11 @@ Everything is paid in the real world, but we don't need to spend anything:
 ## 4. The process — who does what
 
 ### A — Claude does these (in order)
-- [ ] **A1.** Set up this research repo properly: minimal reused `Brain`-class
-      logic (fictional clinic profile only, no business secrets), `.gitignore`,
-      `LICENSE` (MIT, consistent with the rest of the GitHub portfolio),
-      README.
+- [x] **A1.** Set up this research repo properly: `.gitignore`, `LICENSE`
+      (MIT), README, `status.html` tracker, public GitHub repo. **Done
+      2026-11-16** — github.com/m-aoun/voice-agent-research. (The reused
+      `Brain`-class logic, fictional clinic profile only, no business
+      secrets, moves into A2 since that's where it's actually used.)
 - [ ] **A2.** Build the RQ2 experiment harness — text-only, drives the real
       `Brain` class with scripted multi-turn caller scenarios (booking,
       insurance question, reschedule, angry caller, ambiguous multi-ask —
@@ -309,6 +310,6 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-16): planning complete, nothing built yet.** This
-file and the empty `E:\voice-agent-research` folder are the only artifacts
-so far. Next action when resumed: start **A1**.
+**Current status (2026-11-16): A1 done.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research. Next action: **A2** (build the RQ2
+harness). Check `status.html` for the live-updated task-by-task picture.
