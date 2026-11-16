@@ -82,9 +82,24 @@ const SCENARIOS = [
       'Okay, and if I came in today for a flu shot, about how long is the wait usually?',
     ],
   },
+  {
+    id: 'rambling-caller',
+    turns: [
+      "So my daughter has this thing where she gets these headaches sometimes, and I don't know if it's the allergies acting up again because it's that time of year, or if it's something else, and also she mentioned her ear hurts a little, and I wasn't sure if that's related or if I should just bring her in for both, and honestly I'm not even sure which doctor she saw last time.",
+      "Okay so could you check if Dr. Patel is the one who saw her in like March or April, I don't remember exactly, and if not just whoever is free I guess, as long as it's this week ideally.",
+    ],
+  },
+  {
+    id: 'rapid-topic-switch',
+    turns: [
+      "Quick one — can I get a referral letter faxed over? Actually wait, before that, do you guys do blood work on-site or do I have to go somewhere else? Oh and also is parking free there?",
+      "Got it. Separately, my insurance card expired, does that block me from booking or can I just update it when I come in?",
+    ],
+  },
 ];
 
 const MODELS = (process.env.HARNESS_MODELS || 'llama3:8b').split(',').map((s) => s.trim()).filter(Boolean);
+const TEMPERATURES = (process.env.HARNESS_TEMPERATURES || '0.4').split(',').map((s) => Number(s.trim())).filter((n) => !Number.isNaN(n));
 
 function makeLogger(onTruncated) {
   return {
@@ -137,20 +152,24 @@ async function main() {
 
   console.log(`LLM endpoint: ${process.env.LLM_BASE_URL || 'http://localhost:11434/v1/chat/completions (default)'}`);
   console.log(`Models: ${MODELS.join(', ')}`);
+  console.log(`Temperatures: ${TEMPERATURES.join(', ')}`);
 
   for (const model of MODELS) {
-    for (const singleSegment of [false, true]) {
-      const label = `${model.replace(/[:/]/g, '_')}__singleSegment-${singleSegment}`;
-      const allResults = {};
-      for (const scenario of SCENARIOS) {
-        process.stdout.write(`  ${label} / ${scenario.id} ... `);
-        const started = Date.now();
-        allResults[scenario.id] = await runScenario(scenario, { singleSegment, model });
-        console.log(`done (${Date.now() - started}ms)`);
+    for (const temperature of TEMPERATURES) {
+      process.env.LLM_TEMPERATURE = String(temperature);
+      for (const singleSegment of [false, true]) {
+        const label = `${model.replace(/[:/]/g, '_')}__temp-${temperature}__singleSegment-${singleSegment}`;
+        const allResults = {};
+        for (const scenario of SCENARIOS) {
+          process.stdout.write(`  ${label} / ${scenario.id} ... `);
+          const started = Date.now();
+          allResults[scenario.id] = await runScenario(scenario, { singleSegment, model });
+          console.log(`done (${Date.now() - started}ms)`);
+        }
+        const outFile = path.join(outDir, `${label}.json`);
+        fs.writeFileSync(outFile, JSON.stringify(allResults, null, 2));
+        console.log(`Wrote ${outFile}`);
       }
-      const outFile = path.join(outDir, `${label}.json`);
-      fs.writeFileSync(outFile, JSON.stringify(allResults, null, 2));
-      console.log(`Wrote ${outFile}`);
     }
   }
 }

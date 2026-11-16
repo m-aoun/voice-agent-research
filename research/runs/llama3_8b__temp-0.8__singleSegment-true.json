@@ -1,0 +1,131 @@
+{
+  "booking-simple": [
+    {
+      "userTurn": "Hi, I'd like to book an appointment for a check-up.",
+      "rawReplyText": "We'd be happy to help you schedule a check-up appointment! We accept new patients and usually have same-week availability. Would you like me to find a time that suits you?",
+      "spokenSentences": [
+        "We'd be happy to help you schedule a check-up appointment!",
+        "We accept new patients and usually have same-week availability.",
+        "Would you like me to find a time that suits you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "insurance-question": [
+    {
+      "userTurn": "Do you accept Blue Cross insurance?",
+      "rawReplyText": "Yes, we do accept Blue Cross insurance at Lakeview Family Clinic.",
+      "spokenSentences": [
+        "Yes, we do accept Blue Cross insurance at Lakeview Family Clinic."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "reschedule": [
+    {
+      "userTurn": "I need to reschedule my appointment from Friday.",
+      "rawReplyText": "Let me look into that for you. What's your name and what time was your original appointment on Friday?",
+      "spokenSentences": [
+        "Let me look into that for you.",
+        "What's your name and what time was your original appointment on Friday?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Can we move it to the following Monday morning instead?",
+      "rawReplyText": "Yes, I can modify your appointment to the next available spot on Monday morning. Let me just check the schedule real quick... (checking) Alright, yes, we have availability at 10:30 am or 11:00 am on Monday. Which of those times works best for you?",
+      "spokenSentences": [
+        "Yes, I can modify your appointment to the next available spot on Monday morning.",
+        "Let me just check the schedule real quick...",
+        "(checking) Alright, yes, we have availability at 10:30 am or 11:00 am on Monday.",
+        "Which of those times works best for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "angry-caller": [
+    {
+      "userTurn": "I've been waiting all week for someone to call me back about my prescription refill.",
+      "rawReplyText": "Sorry to hear that! Let me look into that for you. Can you please tell me your name and the date you originally called in for the refill?",
+      "spokenSentences": [
+        "Sorry to hear that!",
+        "Let me look into that for you.",
+        "Can you please tell me your name and the date you originally called in for the refill?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "ambiguous-multi-ask": [
+    {
+      "userTurn": "Hi, quick questions — are you open on weekends, and do you do walk-ins, and also do you do flu shots?",
+      "rawReplyText": "We're open Saturdays from 9am to 1pm. We don't typically offer walk-in appointments, but we usually have same-day availability for new patients. And yes, we do provide flu shots as part of our vaccination services.",
+      "spokenSentences": [
+        "We're open Saturdays from 9am to 1pm.",
+        "We don't typically offer walk-in appointments, but we usually have same-day availability for new patients.",
+        "And yes, we do provide flu shots as part of our vaccination services."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "rambling-caller": [
+    {
+      "userTurn": "So my daughter has this thing where she gets these headaches sometimes, and I don't know if it's the allergies acting up again because it's that time of year, or if it's something else, and also she mentioned her ear hurts a little, and I wasn't sure if that's related or if I should just bring her in for both, and honestly I'm not even sure which doctor she saw last time.",
+      "rawReplyText": "I'd be happy to help! It sounds like your daughter might be experiencing some discomfort. We can definitely schedule an appointment for her to get checked out. Since it's a bit unclear what's going on, it would be best to have one of our doctors take a look at her. Would you like to schedule an appointment today or is there a specific day that works better for you?",
+      "spokenSentences": [
+        "I'd be happy to help!",
+        "It sounds like your daughter might be experiencing some discomfort.",
+        "We can definitely schedule an appointment for her to get checked out.",
+        "Since it's a bit unclear what's going on, it would be best to have one of our doctors take a look at her.",
+        "Would you like to schedule an appointment today or is there a specific day that works better for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "rapid-topic-switch": [
+    {
+      "userTurn": "Quick one — can I get a referral letter faxed over? Actually wait, before that, do you guys do blood work on-site or do I have to go somewhere else? Oh and also is parking free there?",
+      "rawReplyText": "We do offer lab draws here at the clinic, so you wouldn't need to go anywhere else for bloodwork. And as for parking, yes, it's free!",
+      "spokenSentences": [
+        "We do offer lab draws here at the clinic, so you wouldn't need to go anywhere else for bloodwork.",
+        "And as for parking, yes, it's free!"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Got it. Separately, my insurance card expired, does that block me from booking or can I just update it when I come in?",
+      "rawReplyText": "You're good to book an appointment despite the expired insurance card. We'll verify your coverage and update your information when you arrive at the clinic.",
+      "spokenSentences": [
+        "You're good to book an appointment despite the expired insurance card.",
+        "We'll verify your coverage and update your information when you arrive at the clinic."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ]
+}

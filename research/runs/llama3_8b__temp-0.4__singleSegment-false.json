@@ -1,0 +1,124 @@
+{
+  "booking-simple": [
+    {
+      "userTurn": "Hi, I'd like to book an appointment for a check-up.",
+      "rawReplyText": "We can definitely help you with that! We accept new patients and usually have same-week appointments available. What day and time would work best for you?",
+      "spokenSentences": [
+        "We can definitely help you with that!",
+        "We accept new patients and usually have same-week appointments available.",
+        "What day and time would work best for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "insurance-question": [
+    {
+      "userTurn": "Do you accept Blue Cross insurance?",
+      "rawReplyText": "Yes, we do accept Blue Cross insurance.",
+      "spokenSentences": [
+        "Yes, we do accept Blue Cross insurance."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "reschedule": [
+    {
+      "userTurn": "I need to reschedule my appointment from Friday.",
+      "rawReplyText": "Let me see what's available. Can you please tell me the time of your original appointment on Friday? I'll do my best to find a new time that suits you better.",
+      "spokenSentences": [
+        "Let me see what's available.",
+        "Can you please tell me the time of your original appointment on Friday?",
+        "I'll do my best to find a new time that suits you better."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "angry-caller": [
+    {
+      "userTurn": "I've been waiting all week for someone to call me back about my prescription refill.",
+      "rawReplyText": "Sorry to hear that! Let me see what's going on with your prescription refill. Can you please confirm your name and the date you called in for a refill?",
+      "spokenSentences": [
+        "Sorry to hear that!",
+        "Let me see what's going on with your prescription refill.",
+        "Can you please confirm your name and the date you called in for a refill?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "ambiguous-multi-ask": [
+    {
+      "userTurn": "Hi, quick questions — are you open on weekends, and do you do walk-ins, and also do you do flu shots?",
+      "rawReplyText": "We're open on Saturdays from 9am-1pm, but closed Sundays. We don't typically take walk-ins, but same-week appointments are usually available for new patients. And yes, we do offer flu shots as part of our vaccination services!",
+      "spokenSentences": [
+        "We're open on Saturdays from 9am-1pm, but closed Sundays.",
+        "We don't typically take walk-ins, but same-week appointments are usually available for new patients.",
+        "And yes, we do offer flu shots as part of our vaccination services!"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "rambling-caller": [
+    {
+      "userTurn": "So my daughter has this thing where she gets these headaches sometimes, and I don't know if it's the allergies acting up again because it's that time of year, or if it's something else, and also she mentioned her ear hurts a little, and I wasn't sure if that's related or if I should just bring her in for both, and honestly I'm not even sure which doctor she saw last time.",
+      "rawReplyText": "Hi there! Sorry to hear your daughter is experiencing some discomfort. It sounds like you're concerned about the headaches and ear pain. We can definitely help with that. Our family medicine doctors are available to see her, and we can schedule an appointment for her today or tomorrow. Would you like me to book a same-day appointment?",
+      "spokenSentences": [
+        "Hi there!",
+        "Sorry to hear your daughter is experiencing some discomfort.",
+        "It sounds like you're concerned about the headaches and ear pain.",
+        "We can definitely help with that.",
+        "Our family medicine doctors are available to see her, and we can schedule an appointment for her today or tomorrow.",
+        "Would you like me to book a same-day appointment?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Okay so could you check if Dr. Patel is the one who saw her in like March or April, I don't remember exactly, and if not just whoever is free I guess, as long as it's this week ideally.",
+      "rawReplyText": "Let me check on that for you. (pause) Yes, according to our records, Dr. Patel did see your daughter in March. However, she has a full schedule today and tomorrow is looking busy too. But don't worry, I can offer you an appointment with one of our other family medicine doctors this week. Would you like me to check availability for Wednesday or Thursday?",
+      "spokenSentences": [
+        "Let me check on that for you.",
+        "(pause) Yes, according to our records, Dr.",
+        "Patel did see your daughter in March.",
+        "However, she has a full schedule today and tomorrow is looking busy too.",
+        "But don't worry, I can offer you an appointment with one of our other family medicine doctors this week.",
+        "Would you like me to check availability for Wednesday or Thursday?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "rapid-topic-switch": [
+    {
+      "userTurn": "Quick one — can I get a referral letter faxed over? Actually wait, before that, do you guys do blood work on-site or do I have to go somewhere else? Oh and also is parking free there?",
+      "rawReplyText": "We do offer lab draws on-site at the clinic. As for your second question, parking is available near our location, but it's not free. You can expect to pay a small fee.",
+      "spokenSentences": [
+        "We do offer lab draws on-site at the clinic.",
+        "As for your second question, parking is available near our location, but it's not free.",
+        "You can expect to pay a small fee."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ]
+}

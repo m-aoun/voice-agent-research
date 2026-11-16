@@ -184,8 +184,24 @@ Everything is paid in the real world, but we don't need to spend anything:
       run — A3 needs more models (`qwen2.5:7b` at least) and likely harder/
       longer scenarios to get positive examples to test the heuristic
       against.
-- [ ] **A3.** Run the harness across all scenarios × models × both modes.
-      Produce raw transcript JSON logs for hand-labeling.
+- [x] **A3.** Run the harness across all scenarios × models × both modes.
+      **Done 2026-11-16.** Expanded to 7 scenarios (added 2 designed to
+      provoke rambling), 2 models (`llama3:8b`, `qwen2.5:7b`), 2 temperatures
+      (0.4 production-matching, 0.8 stress-test) = 8 full runs, ~52 real
+      turns per singleSegment mode, zero errors.
+      **Key finding: 0/52 turns triggered the self-dialogue cut, in either
+      model, at either temperature, even on scenarios designed to provoke
+      rambling.** Manually spot-checked raw (uncut) replies — genuinely
+      well-behaved, no self-dialogue invention (one reply did fabricate a
+      plausible-but-unverified detail, a *different* hallucination type, not
+      the glued-turn pattern). This reframes RQ2: the failure mode may be
+      specific to the real production model (`gpt-oss-20b`, a reasoning
+      model needing special handling) or to the OpenRouter/Groq serving
+      path, not a universal behavior across LLMs. Tried pulling `gpt-oss:20b`
+      locally to test this directly — aborted, see §5 errors log (connection
+      too slow, 13GB/2+hrs). **Open question for A6/A7:** report this
+      honestly as a negative/boundary result, and/or revisit the gpt-oss
+      pull later on better bandwidth.
 - [ ] **A4.** Install Piper TTS locally; build a local STT+LLM+TTS
       instrumented pipeline (faster-whisper + Ollama + Piper) to measure
       per-component latency for RQ1.
@@ -261,11 +277,23 @@ don't let it go stale.
 | `faster-whisper` (pip package) | already present before this project | small | **Pre-existing** | No |
 | Piper TTS | not yet installed — coming in A4 | TBD, usually small (binary + voice model, tens of MB) | New, for this project | **Yes — safe to uninstall after the paper's done** |
 | `node_modules` inside `E:\voice-agent-research\` (once `npm install` runs) | not yet created — coming in A1/A2 | TBD | New | **Yes — delete the whole project folder's node_modules, or the folder entirely, once done, if not needed anymore** |
-| Experiment run logs (`research/runs/*.json` or similar) | not yet created — coming in A3/A5 | small (text) | New | No — keep, this is the actual experimental data for the paper |
-| Errors hit | none yet | — | — | — |
+| Experiment run logs (`research/runs/*.json`) | created in A3 (2026-11-16) | small (text), all committed to git | New | No — keep, this is the actual experimental data for the paper |
+| `gpt-oss:20b` Ollama model pull (the real production model) | attempted 2026-11-16, **aborted** | 0GB (was going to be ~13GB) | N/A — never completed | Already cleaned up — see errors log |
 
 Errors log (append here as they happen, don't lose this context):
-- (none yet)
+- **2026-11-16 — `gpt-oss:20b` pull aborted.** Tried pulling the actual
+  production model (an open-weights release, confirmed available in
+  Ollama's library) to test the exact same model used in the real system.
+  Download speed was ~1.8MB/s → ETA 2+ hours for the 13GB model, impractical
+  for this session. Killed the pull process (PID had to be found via
+  `Get-Process ollama` and stopped directly — `ollama rm` didn't work since
+  the manifest never finished, so the partial blob was orphaned). Deleted
+  the 13GB partial blob file from `~/.ollama/models/blobs/` to reclaim disk
+  space — confirmed back to the pre-existing ~12GB total after cleanup, and
+  the Ollama server (a separate process) kept running fine throughout.
+  **Revisit this later if/when on a faster connection** — it would let RQ2
+  test the actual production model locally instead of only comparable
+  general-purpose models.
 
 ## 6. Machine specs (checked 2026-11-16 — no bottleneck expected)
 
@@ -312,6 +340,8 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-16): A1 and A2 done.** Public GitHub repo live at
-github.com/m-aoun/voice-agent-research. Next action: **A3** (run the RQ2
-harness). Check `status.html` for the live-updated task-by-task picture.
+**Current status (2026-11-16): A1, A2, A3 done.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research. A3's finding reframes RQ2 a bit —
+see the A3 entry above and discuss with Aoun before A6/A7 (writing) commit
+to a framing). Next action: **A4** (Piper + local STT/TTS pipeline for
+RQ1). Check `status.html` for the live-updated task-by-task picture.
