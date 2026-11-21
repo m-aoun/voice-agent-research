@@ -58,6 +58,49 @@ detect/stop it, compared to no detection at all?
   — real precedent found: an undergrad-led ASR paper was accepted there in
   2026 (University of Southern Maine). IEEE Xplore indexed, realistic bar for
   a student co-authored paper.
+  **A10 research (2026-11-22):** SERA 2026 (the 24th edition, Towson, MD)
+  already happened (May 27-29, 2026) — its submission window is closed, so
+  the real target is **SERA 2027, the 25th edition, University of Nevada
+  Las Vegas (UNLV), May 26-28, 2027, hybrid (in person & online)**.
+  Sourced from the official CFP (easychair.org/cfp/SERA-2027) and the ACIS
+  conference page (acisinternational.org/conferences/sera-2027/):
+  - **Deadlines found — note a real conflict needing confirmation before
+    relying on either:** EasyChair's page header says "Submission deadline:
+    March 31, 2027" but its own "IMPORTANT DATES" list AND the ACIS page
+    both independently say **full paper submission: February 26, 2027**.
+    Treat Feb 26, 2027 as the working deadline (two independent sources
+    agree), but double-check on the live CFP closer to the date. Other
+    dates: special session/workshop proposals Jan 12, 2027; abstract
+    registration (EasyChair only) March 1, 2027; acceptance notification
+    April 5, 2027; camera-ready + registration April 19, 2027.
+  - **Format:** IEEE conference template (no LaTeX/Word link given on
+    either page checked), margins/font size must not be changed. **Full
+    papers: up to 8 pages including references. Short papers: up to 4
+    pages including references.** Title must be prefixed "SERA2027:" on
+    submission (SERA shares a submission system with 3 co-located
+    conferences — AIML2027/BCD2027/ICIS2027 — so the prefix picks which
+    one).
+  - **Portal:** EasyChair (easychair.org/conferences/?conf=sera2027).
+  - **Blind review: NOT STATED on either page checked.** Don't assume
+    double-blind; don't anonymize the PDF by default. Re-check the CFP PDF
+    (CFP_SERA2027.pdf, linked from the ACIS page, not yet fetched) or the
+    separate "Paper Submission Instructions" page before actually
+    submitting, in case it specifies this.
+  - **Publication:** "proceedings will be published by IEEE Conference
+    Publishing Services and submitted for indexing in EI, INSPEC, and
+    DBLP" (EasyChair's own wording). IEEE Xplore itself isn't explicitly
+    named on either page — reasonable to assume given IEEE Conference
+    Publishing Services, but not a direct quote, so don't state it to Dr.
+    Sadiq as 100% confirmed without one more check.
+  - **Attendance/fees:** not clearly stated whether an author must attend
+    in person for a non-best-paper submission (the "hybrid" format and an
+    "Online Presentation Coordinating Chair" role both suggest remote
+    presentation is possible, but this isn't explicit). A linked fee
+    schedule PDF and "Register Now" page were both still placeholders
+    ("tba") as of this check — revisit closer to the deadline.
+  - **Takeaway for timeline:** paper needs to be submission-ready by
+    **~Feb 26, 2027** for this specific edition. That's a realistic amount
+    of runway from where the draft is now (2026-11-22).
 - **arXiv preprint** — do this regardless, immediately once there's a solid
   draft. Zero gatekeeping, free, instant, citable even before/without formal
   peer review.
@@ -297,11 +340,41 @@ Everything is paid in the real world, but we don't need to spend anything:
       supervision (not currently enrolled), links straight to the repo,
       gives Aoun notes on tone/splitting it up before sending. **Next: B4
       — Aoun sends it whenever ready, then relays his response back.**
-- [ ] **A9.** Prepare the GitHub repo for publication: clean code, README,
-      LICENSE, check target venue's blind-review policy before making author
-      names visible if needed.
-- [ ] **A10.** Research the exact IEEE SERA submission requirements (CFP,
-      deadline, template, portal) once the draft is close to ready.
+- [x] **A9.** **Done 2026-11-22.** Prepped the repo for publication:
+      - Scanned the full git history (`git log --all -p | grep`) for any
+        accidentally committed API key patterns (OpenRouter's `sk-or-v1-...`
+        specifically, plus generic key-shaped strings) — **confirmed clean,
+        zero matches across all 11 commits.** Both OpenRouter keys used
+        this session were ephemeral shell env vars only, never written to
+        any file.
+      - `README.md` updated: fixed the now-inaccurate "fully free... no
+        paid API required" claim to match the real state (predominantly
+        free, one paid exception for the production-model RQ2 condition,
+        a few cents real cost); added the OpenRouter/Groq reproduction
+        command (verified against what `hallucination_harness.mjs` and
+        `brain.js` actually read from env vars, not just written from
+        memory); linked directly to `paper/paper.md` and
+        `research/RESULTS.md`; added the `analyze_results.mjs` regen
+        command.
+      - `src/brain.js`: added a documentation-only comment on the
+        known-but-real retry-logic footgun (any retry silently falls back
+        to the Ollama-default model name unless `LLM_MODEL` is set) —
+        **did not change the actual logic**, since this file's header
+        explicitly claims to be "unmodified-in-logic" from the real
+        production class, and the bug is irrelevant to what RQ2 studies
+        (the `GLUED_SEGMENT` heuristic), so documenting it beats silently
+        changing reused production code.
+      - Blind-review policy check deferred to A10's findings below — not
+        stated by SERA 2027's CFP, so no author-anonymization change made;
+        revisit before actual submission once confirmed.
+      - `LICENSE` (MIT), `.gitignore`, `package.json` all already fine,
+        no changes needed.
+- [x] **A10.** **Done 2026-11-22.** Researched SERA's real, current
+      submission requirements — see §1 "Target venue" above for full
+      details (dates, deadlines incl. a noted conflict, page limits,
+      template, portal, blind-review status, publication/indexing). Key
+      takeaway: **SERA 2026 already happened; the real target is SERA
+      2027 (UNLV, May 26-28 2027), full-paper deadline ~Feb 26, 2027.**
 - [ ] **A11 (deferred — needs B3 first, not a blocker for anything above).**
       Once Aoun hands over fresh free-tier Deepgram/Groq-OpenRouter/Cartesia
       keys, run the same small batch (50-100 calls) through the real cloud
@@ -517,8 +590,15 @@ verify, not as ground truth — checked every factual claim before acting:
 - Re-verified the repo itself exists (it does — public, MIT, 9 commits,
   0 stars, real README) before leaving any citation to it in the paper.
 
+A9 and A10 are now also done (2026-11-22): the repo is publication-ready
+(git history scanned clean of secrets, README corrected and expanded,
+a real-but-irrelevant-to-the-heuristic bug in `brain.js` documented
+rather than silently changed), and the real target venue/deadline is
+confirmed — **SERA 2027 at UNLV, full-paper deadline ~Feb 26, 2027**
+(SERA 2026 already happened). Full details in §1 and in A9/A10 above.
+
 **Next action: B4 — Aoun sends the outreach message whenever ready, then
-relays Dr. Sadiq's response back.** A9/A10 (arXiv + GitHub publication
-prep, IEEE SERA submission research) can happen in parallel, not blocked
-on his response. Check `status.html` for the live-updated task-by-task
-picture.
+relays Dr. Sadiq's response back.** That's the only task left that isn't
+either done or blocked on Aoun/Dr. Sadiq's own timeline (B1/B3/B5/B6 are
+all optional or far downstream; A11 is deferred and needs B3 first).
+Check `status.html` for the live-updated task-by-task picture.

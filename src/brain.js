@@ -124,6 +124,16 @@ export class Brain {
    * @returns {Promise<{ text: string, transfer: boolean, end: string|null, flag: string|null, followUp: string|null }>}
    */
   async respond(opts) {
+    // Known behavior (kept as-is since this class mirrors the real production
+    // logic unmodified): any retry below, even for a transient/unrelated
+    // error, sets useDefaultModel=true, which drops the per-call `this.model`
+    // override and falls back to `llmConfig.model` (the Ollama-oriented
+    // default, 'llama3:8b' unless LLM_MODEL is set). Pointing at a non-Ollama
+    // endpoint (e.g. OpenRouter) without setting LLM_MODEL means a retry can
+    // silently request an invalid model name, surfacing as a confusing
+    // "<default model> is not a valid model ID" error that masks the real
+    // one. Always set LLM_MODEL to match `this.model` when testing a
+    // non-default endpoint.
     let result;
     let lastErr = null;
     let useDefaultModel = false;
