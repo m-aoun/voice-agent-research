@@ -393,15 +393,34 @@ Everything is paid in the real world, but we don't need to spend anything:
       and is hard to interpret cleanly. **Removed from status.html.**
 
 ### B — Aoun does these
-- [ ] **B1 (revised after A3's finding).** Original plan was hand-labeling
-      transcripts for self-dialogue vs legitimate replies — but A3 found
-      0/52 turns had any self-dialogue, so there's nothing to label in the
-      traditional sense (no positive/negative split to score against).
-      Lighter version instead: spot-check maybe 10-15 of the raw transcripts
-      in `research/runs/*.json` to independently confirm Claude's own read
-      ("genuinely clean, not a missed detection") — a quick sanity check,
-      not exhaustive labeling. Not blocking — can happen whenever Aoun has a
-      few minutes.
+- [x] **B1.** **Done 2026-11-22 — delegated to Claude ("do it").** Spot-
+      checked well beyond the planned 10-15 transcripts: manually read
+      every turn (46 total) across all three models for both
+      rambling-provoking scenarios (`rambling-caller`,
+      `rapid-topic-switch`) at both temperatures, covering both
+      `singleSegment` modes. **Confirmed: zero genuine self-dialogue
+      instances** — every reply is a single, coherent, outward-addressed
+      turn, consistent with the automated 0/85 result.
+      **Found something the automated check couldn't catch and the paper
+      had understated:** the `rambling-caller` scenario's follow-up turn
+      (asking which physician saw the caller's daughter previously — info
+      the agent has no way to know) reliably provokes a *different*
+      hallucination type (factual fabrication, not self-dialogue) in the
+      two local models. Checked every applicable instance across all 12
+      run files (where the scripted conversation actually reached this
+      turn, i.e. didn't end early): **3 of 4 local-model instances
+      fabricated a specific invented physician name as settled fact**
+      (two different names — "Dr. Patel," "Dr. Smith" — across two
+      different runs), while **0 of 4 production-model (`gpt-oss-20b`)
+      instances did** — it correctly declined every time. The paper
+      previously described this as "the one observed factual fabrication"
+      (singular, understating it) — **fixed in `paper/paper.md`'s
+      Results §5.1 and Threats to Validity (Construct Validity)** to
+      report the real, stronger 3-of-4-vs-0-of-4 count. This is a
+      genuinely useful secondary finding that reinforces the paper's
+      existing observation that the production model is more
+      conservative than the local ones, now with real supporting counts
+      instead of one anecdote.
 - [x] **B2 (delegated back to Claude, 2026-11-22).** Aoun said "I don't
       need to read it, you read it — just make sure it's heavy enough to
       actually get accepted." Claude did a genuinely critical self-review
@@ -617,8 +636,15 @@ using just the OpenRouter LLM leg Aoun had already supplied a key for)
 wasn't worth the added complexity against the goal of getting the paper
 submission-ready soon.
 
+B1 is also done now (2026-11-22) — Aoun delegated the spot-check back to
+Claude, which went beyond the planned 10-15 transcripts (46 turns
+reviewed) and found a real improvement to make: the paper had understated
+a secondary fabrication finding as a single anecdote when it actually
+reproduces 3-of-4 times in local models and 0-of-4 times in the
+production model. Fixed in `paper/paper.md`.
+
 **Next action: B4 — Aoun sends the outreach message whenever ready, then
 relays Dr. Sadiq's response back.** That's the only task left in the
 entire project that isn't done, cancelled, or on Dr. Sadiq's own timeline
-(B1/B5/B6 are optional or far downstream). Check `status.html` for the
-live-updated task-by-task picture.
+(B5/B6 are far downstream). Check `status.html` for the live-updated
+task-by-task picture.

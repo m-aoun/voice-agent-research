@@ -354,17 +354,31 @@ not representative of steady-state operation).
 temperatures, including the two scenarios designed to provoke rambling —
 and including **33 turns against the actual production model run through
 its actual production provider**, which directly closes what was this
-paper's single biggest open limitation at an earlier draft stage. We
-manually inspected the corresponding raw (heuristic-disabled) replies for
-the rambling/multi-topic scenarios for all three models and confirmed they
-are genuine single-turn, well-formed responses — not instances of the
-target failure mode that the heuristic failed to catch. The production
-model's replies were, if anything, more conservative than the local
-models': where one local model fabricated a plausible-but-unverified
-detail (inventing which physician had seen a patient previously — a
-*different* hallucination type, factual fabrication, out of scope here),
-`gpt-oss-20b` instead correctly said "I don't have that specific
-information" when asked the equivalent question.
+paper's single biggest open limitation at an earlier draft stage.
+
+We manually inspected all raw (heuristic-disabled and heuristic-enabled)
+replies across all three models for both scenarios designed to provoke
+rambling — 46 turns in total, exceeding our own planned spot-check — and
+confirmed they are genuine single-turn, well-formed responses, not
+instances of the target failure mode that the heuristic failed to catch.
+
+This manual inspection surfaced a second, *different* hallucination type
+that RQ2's heuristic is not designed to catch and that we do not count
+toward the self-dialogue result above: factual fabrication of an
+unverifiable record detail. The rambling-caller scenario's follow-up turn
+asks the agent to recall which physician saw the caller's daughter on a
+prior visit — information the agent has no way to actually know. Across
+every applicable turn where this follow-up fired (excluding turns where
+the scripted conversation ended before reaching it), **the two local
+models fabricated a specific, plausible-sounding physician name as
+settled fact in 3 of 4 instances** ("Dr. Patel did see your daughter in
+March," "Dr. Smith saw your daughter in March" — two different invented
+names across two different runs), while **the production model
+(`gpt-oss-20b`) correctly declined in all 4 of its applicable
+instances** ("I'm not sure which doctor saw her... I'll check our
+records and let you know," "I don't have that specific information"),
+consistent with the broader pattern that it is the more conservative of
+the three models tested.
 
 **Heuristic robustness check (10 deterministic test cases, Section 4.1).**
 8 of 10 cases behaved as a correct heuristic should (no false cut on
@@ -503,9 +517,10 @@ paper's claims should be read through.
   like-for-like comparison.
 - "Self-dialogue hallucination" is operationalized narrowly, as what the
   `GLUED_SEGMENT` heuristic is designed to catch (a glued second
-  conversational turn). The one observed factual fabrication (Section 5.1)
-  is a genuine hallucination by any general definition but is outside this
-  construct, and we do not count it toward RQ2's result either way.
+  conversational turn). The factual fabrications observed in the
+  rambling-caller scenario (Section 5.1) are genuine hallucinations by
+  any general definition but are outside this construct, and we do not
+  count them toward RQ2's result either way.
 
 **Internal validity** (could something other than what we claim explain
 the result?)
