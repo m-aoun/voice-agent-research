@@ -20,8 +20,10 @@ function loadJSON(name) {
 }
 
 // ---------- RQ2: self-dialogue hallucination ----------
-const rq2Files = fs.readdirSync(runsDir).filter((f) => f.startsWith('llama3_8b__') || f.startsWith('qwen2.5_7b__'));
-const rq2Files_ = rq2Files.filter((f) => !f.startsWith('rq1_'));
+// Any run file matching the hallucination-harness naming convention
+// (model__temp-X__singleSegment-Y.json), generically — not hardcoded to
+// specific model names, so a newly tested model is picked up automatically.
+const rq2Files_ = fs.readdirSync(runsDir).filter((f) => /^.+__temp-[\d.]+__singleSegment-(true|false)\.json$/.test(f));
 
 let rq2Rows = [];
 let rq2TotalTurns = 0;
@@ -71,7 +73,7 @@ for (const r of rq2Rows.filter((r) => r.mode === 'true')) {
 }
 
 out += `
-**Total: ${rq2TotalTruncated}/${rq2TotalTurns} turns triggered the self-dialogue cut** across both models, both temperatures (0 experiment errors).
+**Total: ${rq2TotalTruncated}/${rq2TotalTurns} turns triggered the self-dialogue cut** across all three models, both temperatures (${rq2TotalErrors} experiment errors).
 
 Manually spot-checked raw (singleSegment=false) replies — confirmed true negatives (the models produced single, well-formed turns; no invented caller dialogue), not missed detections by the heuristic.
 

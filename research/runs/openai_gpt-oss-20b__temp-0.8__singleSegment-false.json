@@ -1,0 +1,200 @@
+{
+  "booking-simple": [
+    {
+      "userTurn": "Hi, I'd like to book an appointment for a check-up.",
+      "rawReplyText": "Sure, I can help with that. May I have your name and the preferred date and time for the appointment?",
+      "spokenSentences": [
+        "Sure, I can help with that.",
+        "May I have your name and the preferred date and time for the appointment?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Does Tuesday afternoon work?",
+      "rawReplyText": "Yes, Tuesday afternoon is available. Could you please provide your name and a preferred time between 1:00 pm and 4:00 pm?",
+      "spokenSentences": [
+        "Yes, Tuesday afternoon is available.",
+        "Could you please provide your name and a preferred time between 1:00 pm and 4:00 pm?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "My name is John Smith, phone is 555-123-4567.",
+      "rawReplyText": "Thank you, John. We have a slot at 2:30 pm on Tuesday. I’ll confirm your insurance coverage and send a reminder. You’ll receive a text from us with the details. Is that okay?",
+      "spokenSentences": [
+        "Thank you, John.",
+        "We have a slot at 2:30 pm on Tuesday.",
+        "I’ll confirm your insurance coverage and send a reminder.",
+        "You’ll receive a text from us with the details.",
+        "Is that okay?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "insurance-question": [
+    {
+      "userTurn": "Do you accept Blue Cross insurance?",
+      "rawReplyText": "Yes, we accept most major plans, including Blue Cross. I can confirm your specific coverage when we book an appointment.",
+      "spokenSentences": [
+        "Yes, we accept most major plans, including Blue Cross.",
+        "I can confirm your specific coverage when we book an appointment."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Okay, and how much would a regular visit cost without insurance?",
+      "rawReplyText": "Our standard office visit fee is $150 for a regular check‑up. If you have any other questions, let me know.",
+      "spokenSentences": [
+        "Our standard office visit fee is $150 for a regular check‑up.",
+        "If you have any other questions, let me know."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Alright, can I book for next week then?",
+      "rawReplyText": "Sure, I can schedule a same‑week appointment. May I have your name and a preferred day and time next week?",
+      "spokenSentences": [
+        "Sure, I can schedule a same‑week appointment.",
+        "May I have your name and a preferred day and time next week?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "reschedule": [
+    {
+      "userTurn": "I need to reschedule my appointment from Friday.",
+      "rawReplyText": "Sure, can you let me know which Friday you had the appointment and what new date or time would work for you?",
+      "spokenSentences": [
+        "Sure, can you let me know which Friday you had the appointment and what new date or time would work for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Can we move it to the following Monday morning instead?",
+      "rawReplyText": "I can check Monday morning for you. May I have your name and the appointment time you were originally scheduled for?",
+      "spokenSentences": [
+        "I can check Monday morning for you.",
+        "May I have your name and the appointment time you were originally scheduled for?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Thanks, that works for me.",
+      "rawReplyText": "Your appointment has been moved to Monday at 9:00 am. We’ll call you 15 minutes before to confirm. If you need anything else, just let us know.",
+      "spokenSentences": [
+        "Your appointment has been moved to Monday at 9:00 am.",
+        "We’ll call you 15 minutes before to confirm.",
+        "If you need anything else, just let us know."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "angry-caller": [
+    {
+      "userTurn": "I've been waiting all week for someone to call me back about my prescription refill.",
+      "rawReplyText": "I’m sorry to hear that. I’ll check on the status of your prescription refill right away.",
+      "spokenSentences": [
+        "I’m sorry to hear that.",
+        "I’ll check on the status of your prescription refill right away."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "This is the third time I'm calling about this, nobody is helping me.",
+      "rawReplyText": "I’m sorry for the delay. I’ll check the refill status now.",
+      "spokenSentences": [
+        "I’m sorry for the delay.",
+        "I’ll check the refill status now."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "ambiguous-multi-ask": [
+    {
+      "userTurn": "Hi, quick questions — are you open on weekends, and do you do walk-ins, and also do you do flu shots?",
+      "rawReplyText": "We’re open Saturday from 9 am to 1 pm.  \nWe don’t take walk‑ins, but same‑week appointments are usually available.  \nYes, we offer flu shots.",
+      "spokenSentences": [
+        "We’re open Saturday from 9 am to 1 pm.",
+        "We don’t take walk‑ins, but same‑week appointments are usually available.",
+        "Yes, we offer flu shots."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "rambling-caller": [
+    {
+      "userTurn": "So my daughter has this thing where she gets these headaches sometimes, and I don't know if it's the allergies acting up again because it's that time of year, or if it's something else, and also she mentioned her ear hurts a little, and I wasn't sure if that's related or if I should just bring her in for both, and honestly I'm not even sure which doctor she saw last time.",
+      "rawReplyText": "It sounds like a good idea to bring her in for an evaluation of both the headaches and the ear pain. I can schedule an appointment for her; may I have her name, age, and a preferred day/time?",
+      "spokenSentences": [
+        "It sounds like a good idea to bring her in for an evaluation of both the headaches and the ear pain.",
+        "I can schedule an appointment for her; may I have her name, age, and a preferred day/time?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "Okay so could you check if Dr. Patel is the one who saw her in like March or April, I don't remember exactly, and if not just whoever is free I guess, as long as it's this week ideally.",
+      "rawReplyText": "I don’t have that specific information.",
+      "spokenSentences": [
+        "I don’t have that specific information."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": "check which doctor saw the patient in March or April"
+    }
+  ],
+  "rapid-topic-switch": [
+    {
+      "userTurn": "Quick one — can I get a referral letter faxed over? Actually wait, before that, do you guys do blood work on-site or do I have to go somewhere else? Oh and also is parking free there?",
+      "rawReplyText": "We can fax a referral letter—please provide the fax number.  \nYes, we do blood work on-site with our lab.  \nParking is free for patients.",
+      "spokenSentences": [
+        "We can fax a referral letter—please provide the fax number.",
+        "Yes, we do blood work on-site with our lab.",
+        "Parking is free for patients."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ]
+}

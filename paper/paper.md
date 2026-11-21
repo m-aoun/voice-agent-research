@@ -23,9 +23,12 @@ model continues a conversation on the caller's behalf — answering its own
 question, inventing what the caller said — producing a reply that, left
 unchecked, would be spoken aloud as if the caller had actually said those
 things. We study both concerns using a real, working AI phone-receptionist
-system's production code, instrumented to run entirely on a free, local
-stack (Ollama, faster-whisper, Piper) so every result here is independently
-reproducible at zero cost. For latency (RQ1, n=30 turns per model), we
+system's production code. RQ1 and most of RQ2 run entirely on a free,
+local stack (Ollama, faster-whisper, Piper); one additional RQ2 condition
+uses the real production model via its real production provider
+(`openai/gpt-oss-20b` via OpenRouter, pinned to Groq), at a real but
+negligible cost (~\$0.002 total for 66 API calls). For latency (RQ1, n=30
+turns per model), we
 find our local time-to-first-token is only 1.4-1.7x slower than published
 cloud figures despite running on a 4GB consumer laptop GPU, but sustained
 token throughput (time-to-first-complete-sentence) is the dominant cost,
@@ -34,14 +37,18 @@ the real gap between a free/local stack and specialized inference providers
 like Groq is throughput, not startup latency. For reliability (RQ2), we
 evaluate a lightweight, already-deployed runtime heuristic
 (`GLUED_SEGMENT`) that detects and truncates self-dialogue mid-stream before
-it reaches the caller. Across 52 scripted conversational turns, 2
-general-purpose open-weight models, and 2 temperature settings, we find
-**zero** instances of the failure mode the heuristic was built to catch —
-a negative result that, combined with manual verification that these are
-true negatives rather than missed detections, suggests the failure mode may
-be specific to the production system's original model (a reasoning model
-served via a different provider) rather than a universal property of LLMs
-in this role. We report this honestly as a boundary condition on the
+it reaches the caller. Across 85 scripted conversational turns spanning
+**three** models — two general-purpose open-weight models run locally, and
+the actual production model run through its actual production provider —
+and two temperature settings, we find **zero** instances of the failure
+mode the heuristic was built to catch. Critically, this null result holds
+even for the exact model and serving path the heuristic was originally
+built to defend against, which rules out "wrong model" as the explanation
+and instead raises a different, more interesting possibility: the failure
+mode may simply be rare, occurring at a low enough rate that 85 trials is
+not yet enough to reliably observe it, rather than absent. Combined with
+manual verification that our zero observations are true negatives (not
+missed detections), we report this honestly as a boundary condition on the
 heuristic's necessity, not a positive validation of its accuracy. We
 additionally run a small, deterministic robustness check directly against
 the heuristic's matching rule (no LLM involved) and find a concrete,
@@ -90,22 +97,28 @@ mode offline, as a method for *constructing* hallucination benchmarks
 [3], [4], never as something detected and acted on inside a live generation
 stream.
 
-We run every experiment on a fully free, local software stack — Ollama for
-the LLM, faster-whisper for STT, Piper for TTS — so that every number in
-this paper is independently reproducible by any reader at zero monetary
-cost, using the code published alongside this paper.
+We run nearly every experiment on a fully free, local software stack —
+Ollama for the LLM, faster-whisper for STT, Piper for TTS — so that almost
+every number in this paper is independently reproducible by any reader at
+zero monetary cost. The one exception, described in Section 4.1, is a
+direct test against the actual production model through its actual
+production provider, at a real but negligible cost (under \$0.01). All code
+is published alongside this paper.
 
 Our contributions:
 1. A real-world latency characterization of a free/local cascaded voice
    pipeline, broken into STT, LLM time-to-first-token, LLM
    time-to-first-complete-sentence, and TTS, compared against two recent
    published cloud benchmarks [1], [2].
-2. An evaluation of a production self-dialogue-hallucination defense across
-   two open-weight LLMs, two temperature settings, and seven realistic
-   front-desk conversational scenarios — reported as a negative/boundary
-   result, with manual verification that it is a true negative rather than
-   a missed detection, and a discussion of what that implies about the
-   failure mode's generality.
+2. An evaluation of a production self-dialogue-hallucination defense
+   across **three** models — two general-purpose open-weight LLMs and,
+   critically, the actual production model run through its actual
+   production provider — two temperature settings, and seven realistic
+   front-desk conversational scenarios (85 turns total), reported as a
+   negative result with manual verification that it is a true negative
+   rather than a missed detection, and a statistically-grounded discussion
+   of what a null result over ~85 trials does and does not rule out for a
+   potentially rare failure mode.
 3. A deterministic robustness check of that same defense's matching rule,
    independent of any LLM, which surfaces a concrete, previously
    undocumented false-positive risk (certain all-capital dotted
@@ -253,9 +266,11 @@ the direct object of study for RQ2.
 ## 4. Methodology
 
 All experiments run on a single consumer laptop (8-core/16-thread CPU,
-32GB RAM, 4GB VRAM discrete GPU) using a fully free, local software stack:
-Ollama for LLM inference, faster-whisper for STT, and Piper for TTS. No
-paid API calls were made for any result reported here.
+32GB RAM, 4GB VRAM discrete GPU) using a predominantly free, local
+software stack: Ollama for LLM inference, faster-whisper for STT, and
+Piper for TTS. The one exception is one condition within RQ2 (Section
+4.1), which calls the actual production model through its actual
+production provider via a paid API at a real but negligible cost.
 
 ### 4.1 RQ2 — Self-dialogue hallucination
 
@@ -266,14 +281,20 @@ Seven scenarios were scripted to resemble a real front-desk clinic phone
 call, including two designed specifically to invite rambling or
 multi-topic replies likely to provoke the target failure mode (a caller
 raising several loosely related concerns in one turn; a caller rapidly
-switching topics). Each scenario was run against two general-purpose
-open-weight models available via Ollama (`llama3:8b`, `qwen2.5:7b`), at two
+switching topics). Each scenario was run against **three** models at two
 temperature settings (0.4, matching the production system's configured
 value; 0.8, a deliberate stress condition), in both the production
 `singleSegment: true` mode (heuristic active) and a `false` counterfactual
 (heuristic disabled, to inspect the raw, uncut model output as ground
-truth). This produced 52 real conversational turns across the heuristic-
-active condition. All raw transcripts are released alongside this paper
+truth): two general-purpose open-weight models run locally and free via
+Ollama (`llama3:8b`, `qwen2.5:7b`), and — critically — the actual
+production model, `openai/gpt-oss-20b`, run through the exact production
+serving path (OpenRouter, pinned to the `Groq` provider via the same
+`provider: { order: ['Groq'] }` mechanism `src/brain.js` already supports),
+using a fresh, research-only API key at a real but negligible cost (66
+calls, ~\$0.002 total). This produced 85 real conversational turns across
+the heuristic-active condition, 33 of them against the production model
+specifically. All raw transcripts are released alongside this paper
 (`research/runs/*.json`).
 
 **Heuristic robustness check (false positives).** The LLM-driven
@@ -322,20 +343,28 @@ not representative of steady-state operation).
 
 | Model | Temperature | Turns | Self-dialogue cuts triggered |
 |---|---|---|---|
-| llama3:8b | 0.4 | 8 | 0 |
-| llama3:8b | 0.8 | 9 | 0 |
-| qwen2.5:7b | 0.4 | 18 | 0 |
-| qwen2.5:7b | 0.8 | 17 | 0 |
+| llama3:8b (local) | 0.4 | 8 | 0 |
+| llama3:8b (local) | 0.8 | 9 | 0 |
+| qwen2.5:7b (local) | 0.4 | 18 | 0 |
+| qwen2.5:7b (local) | 0.8 | 17 | 0 |
+| **openai/gpt-oss-20b (production model, via OpenRouter→Groq)** | 0.4 | 16 | 0 |
+| **openai/gpt-oss-20b (production model, via OpenRouter→Groq)** | 0.8 | 17 | 0 |
 
-**0 of 52 turns** triggered the heuristic, across both models, both
-temperatures, including the two scenarios designed to provoke rambling. We
+**0 of 85 turns** triggered the heuristic, across all three models, both
+temperatures, including the two scenarios designed to provoke rambling —
+and including **33 turns against the actual production model run through
+its actual production provider**, which directly closes what was this
+paper's single biggest open limitation at an earlier draft stage. We
 manually inspected the corresponding raw (heuristic-disabled) replies for
-these scenarios and confirmed they are genuine single-turn, well-formed
-responses — not instances of the target failure mode that the heuristic
-failed to catch. One reply did fabricate a plausible-but-unverified detail
-(inventing which physician had seen a patient previously), which is a
-*different* hallucination type (factual fabrication) than the self-dialogue
-pattern this heuristic targets, and is out of scope for this paper.
+the rambling/multi-topic scenarios for all three models and confirmed they
+are genuine single-turn, well-formed responses — not instances of the
+target failure mode that the heuristic failed to catch. The production
+model's replies were, if anything, more conservative than the local
+models': where one local model fabricated a plausible-but-unverified
+detail (inventing which physician had seen a patient previously — a
+*different* hallucination type, factual fabrication, out of scope here),
+`gpt-oss-20b` instead correctly said "I don't have that specific
+information" when asked the equivalent question.
 
 **Heuristic robustness check (10 deterministic test cases, Section 4.1).**
 8 of 10 cases behaved as a correct heuristic should (no false cut on
@@ -346,7 +375,7 @@ error at all — **any multi-letter, all-capital dotted abbreviation**
 ("U.S.", and by the same logic "U.K.", "U.N.", "U.S.A."), where the
 regex's trigger condition is satisfied *inside* the abbreviation itself.
 We note that none of our 7 RQ2 scenarios happened to contain this specific
-pattern, which means **our 0/52 result should not be read as evidence this
+pattern, which means **our 0/85 result should not be read as evidence this
 false-positive mode doesn't occur in practice — only that our scenarios
 did not happen to probe for it.** This is exactly the kind of narrow,
 specific, checkable finding we think matters more than a vague
@@ -431,25 +460,33 @@ GPU/TFLOPS specification.
 
 **Reliability.** We report RQ2 plainly as a negative result: the specific
 failure mode the production heuristic was built to catch did not occur, at
-all, across 52 real turns spanning two models, two temperatures, and
-scenarios designed to provoke it. We do not read this as evidence the
-heuristic is unnecessary in general — it was built in direct response to
-observed behavior in the production system's original model, served via a
-different provider, which this experiment did not have the opportunity to
-test directly (Section 7). We instead read it as a genuine boundary
-condition: self-dialogue hallucination, at least as triggered under the
-conditions we tested, may be specific to a particular model or serving
-path rather than a universal property of LLMs used in this role. This
-reframes the contribution from "here is how well this heuristic performs"
-to "here is a lightweight runtime technique that exists because it solved
-a real production problem, and here is evidence about which conditions do
-and do not reproduce that problem" — which we think is the more honest and,
-ultimately, more useful claim for anyone building a similar system to be
-able to rely on. Read as a *trustworthy AI* contribution specifically: a
-production system's own defense mechanism is itself a legitimate object of
-study, and negative replication results about when a failure mode does or
-does not occur are exactly the kind of evidence that should accumulate in
-this area, rather than only positive "our mitigation works" claims.
+all, across 85 real turns spanning three models (including the actual
+production model, run through its actual production provider), two
+temperatures, and scenarios designed to provoke it. This is a materially
+stronger negative result than an earlier draft of this work could report,
+which only tested two unrelated models and had to leave "maybe it's the
+production model specifically" open as the leading explanation. Testing
+the real model directly rules that specific explanation out, and leaves a
+different, more statistically grounded one in its place: **if the true
+rate at which this failure mode occurs in practice is low — say, in the
+low single-digit percent, consistent with it being observed often enough
+in real transcripts to justify building a defense, but not so often that
+every call exhibits it — then 85 trials is not actually enough to expect
+to reliably observe even one occurrence.** (At a true rate of 1%, the chance of seeing zero events in 85 independent
+trials is 0.99^85 ≈ 42.6%; at 2%, 0.98^85 ≈ 18.0%; even at 5%, it is still
+0.95^85 ≈ 1.3% — not negligible for a single run like ours.) We think this is the honest
+reading: not "the heuristic is unnecessary," but "a problem can be real,
+worth defending against, and still be rare enough that a few dozen
+scripted trials won't reliably reproduce it" — which has a direct,
+practical implication for anyone evaluating a similar production
+heuristic: a negative result over on the order of 100 trials should not,
+by itself, be read as evidence a rare failure mode doesn't exist. Read as
+a *trustworthy AI* contribution specifically: a production system's own
+defense mechanism is itself a legitimate object of study, and negative
+replication results — reported with the statistical honesty to say what
+they do and do not rule out — are exactly the kind of evidence that
+should accumulate in this area, rather than only positive "our mitigation
+works" claims.
 
 ## 7. Threats to Validity
 
@@ -472,15 +509,19 @@ paper's claims should be read through.
 
 **Internal validity** (could something other than what we claim explain
 the result?)
-- **The production model was not tested directly.** The original system's
-  LLM is a specific reasoning model served via a specific provider; we
-  tested two different, general-purpose open-weight models instead,
-  because the production model was not locally available within the time
-  and bandwidth constraints of this work (a 13GB download at the available
-  connection speed was not practical during this study). This is the
-  single most important open question this paper leaves for future work,
-  and the main reason RQ2's negative result must be read as a boundary
-  condition rather than a general claim about LLMs in this role.
+- **Statistical power to detect a rare event.** An earlier draft of this
+  work could not test the production model directly (a local download was
+  impractical) and had to leave that as the leading explanation for the
+  null result. We have since tested the actual production model through
+  its actual production provider directly (Section 4.1), which rules that
+  specific explanation out. The internal-validity question that remains is
+  the one discussed in Section 6: 85 trials, even against the right model
+  and provider, is not a large enough sample to confidently rule out a
+  failure mode with a true occurrence rate in the low single digits —
+  which is entirely consistent with a problem being real and worth
+  defending against in production, while still not showing up reliably in
+  a run of this size. We do not have a way to fully resolve this within
+  the current draft; it is the clearest concrete next step (Section 8).
 - The manual verification that RQ2's negative result is a true negative
   (Section 5.1) was performed by one of the authors, not an independent or
   blinded rater. For a result this central to the paper's framing, this is
@@ -489,11 +530,12 @@ the result?)
   claim themselves.
 
 **External validity** (how far do these results generalize?)
-- **Sample size.** 52 turns for RQ2 and n=30 turns per model for RQ1 are
-  enough to support the specific, narrow claims made here but are small
-  relative to the kind of large-scale benchmark a dedicated reliability
+- **Sample size.** 85 turns for RQ2 (across three models) and n=30 turns
+  per model for RQ1 are enough to support the specific, narrow claims made
+  here but are small relative to the kind of large-scale benchmark a
+  dedicated reliability
   study (e.g., [6], [7]) would use, and do not claim to generalize beyond
-  the two tested models.
+  the three models tested for RQ2 (two of which were also tested for RQ1).
 - **Synthetic, scripted conversations.** All caller inputs are
   hand-authored scenarios, not real call transcripts, and all RQ1 "caller
   audio" is itself synthetic (TTS-generated), not real human speech. Real
@@ -517,9 +559,12 @@ the result?)
 
 ## 8. Future Work
 
-- Test the actual production model directly once bandwidth allows a
-  13GB local download, to determine whether the self-dialogue failure mode
-  reproduces there specifically.
+- **Run hundreds, not dozens, of trials against the production model
+  specifically**, to tighten the confidence bound on the failure mode's
+  true occurrence rate (Section 6) — at the per-call cost observed here
+  (~\$0.00003/call), even 2,000 trials would cost under \$1, making this
+  entirely feasible as a direct, low-cost follow-up rather than a
+  resource-constrained one.
 - A barge-in / turn-taking evaluation in the style of IHBench [7],
   adapted to this system.
 - The deferred cloud-API comparison sample (a small batch run through real
@@ -542,16 +587,25 @@ the result?)
 
 We present a real-world case study of a production-adjacent cascaded voice
 agent, studied along both its latency profile and a specific LLM
-reliability concern, using a fully free and independently reproducible
-local software stack. Our latency results locate the actual cost of
-running such a pipeline locally in sustained LLM token throughput rather
-than in getting started, and are directly comparable to two recent
-published cloud benchmarks. Our reliability results are a clean negative
-finding, reported honestly as a boundary condition rather than dressed up
-as a positive validation, and we argue that this kind of result — when did
-you solve a real problem, and when does it not reproduce — belongs in the
-literature on trustworthy AI voice systems alongside positive benchmark
-claims.
+reliability concern, using a predominantly free and independently
+reproducible software stack, with one small, transparently-reported
+real-money exception where it mattered most: testing the actual
+production model through its actual production provider. Our latency
+results locate the actual cost of running such a pipeline locally in
+sustained LLM token throughput rather than in getting started, and are
+directly comparable to two recent published cloud benchmarks. Our
+reliability results are a clean negative finding across three models,
+including the production model itself, reported honestly as a boundary
+condition with an explicit statistical accounting of what a null result
+over 85 trials does and does not rule out for a potentially rare failure
+mode — rather than dressed up as either a positive validation or a
+disproof. A deterministic robustness check of the same defense mechanism
+additionally surfaced a concrete, previously undocumented false-positive
+risk, with a correspondingly concrete fix. We argue that this kind of
+result — when did you solve a real problem, when does it not reproduce,
+and what does it break in the process of solving the first problem —
+belongs in the literature on trustworthy AI voice systems alongside
+positive benchmark claims.
 
 ## References
 

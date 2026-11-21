@@ -207,6 +207,39 @@ Everything is paid in the real world, but we don't need to spend anything:
       good paper, not chasing the gpt-oss download further right now. Do
       NOT revisit gpt-oss:20b unless it comes up naturally later — it's not
       blocking anything.
+      **Update (2026-11-22) — the production model WAS tested after all,
+      via a better path.** Aoun re-shared a Gemini review that suggested
+      testing the real production model through a free/cheap cloud API
+      instead of the impractical local 13GB download. Aoun supplied an
+      OpenRouter API key. First key had a hard $0.00 usage limit ("Key
+      limit exceeded (total limit)... $0.00 of $0.00 used") — confirmed via
+      direct `curl`, not a code bug. A retry-logic bug in `Brain.respond()`
+      had briefly masked this (any retry sets `useDefaultModel=true`, which
+      falls back to the Ollama-only default model name `llama3:8b`, invalid
+      on OpenRouter — so the real $0-limit error was hidden behind a
+      secondary "llama3:8b is not a valid model ID" error on the first
+      attempt). Aoun supplied a second key with an explicit $0.50 limit —
+      verified working via `curl` first, then ran the full harness:
+      `openai/gpt-oss-20b` via OpenRouter, pinned to the Groq provider
+      (`provider: { order: ['Groq'] }`) — i.e. the exact real production
+      model AND the exact real production serving path. 2 temperatures ×
+      2 singleSegment modes × 7 scenarios = 33 additional real turns.
+      **Result: 0/33 additional triggers — RQ2 total is now 0/85 across
+      three models.** Manually spot-checked raw replies: the production
+      model was, if anything, more conservative than the local models
+      (e.g. said "I don't have that specific information" rather than
+      fabricating a physician's name). Real cost incurred: a few cents,
+      well under the $0.50 limit. `research/analyze_results.mjs` updated
+      to generically match any `<model>__temp-X__singleSegment-Y.json` file
+      instead of a hardcoded two-model list, and `research/RESULTS.md`
+      regenerated to confirm 0/85. `paper/paper.md` updated throughout
+      (Abstract, Methodology, Results, Discussion's new binomial-statistics
+      paragraph, Threats to Validity, Future Work, Conclusion) to reflect
+      three models and 85 turns, and the paper's earlier blanket "fully
+      free / zero cost / no paid API calls" claims corrected to
+      "predominantly free... one exception... negligible cost" since they
+      became false once this test was added. This closes what had been the
+      paper's single biggest acknowledged limitation.
 - [x] **A4.** Install Piper TTS locally; build a local STT+LLM+TTS
       instrumented pipeline. **Done 2026-11-21.** `pip install piper-tts`,
       downloaded `en_US-amy-medium` voice (~63MB). Built
@@ -336,6 +369,8 @@ don't let it go stale.
 | `node_modules` inside `E:\voice-agent-research\` (once `npm install` runs) | not yet created — coming in A1/A2 | TBD | New | **Yes — delete the whole project folder's node_modules, or the folder entirely, once done, if not needed anymore** |
 | Experiment run logs (`research/runs/*.json`) | created in A3 (2026-11-16) | small (text), all committed to git | New | No — keep, this is the actual experimental data for the paper |
 | `gpt-oss:20b` Ollama model pull (the real production model) | attempted 2026-11-16, **aborted** | 0GB (was going to be ~13GB) | N/A — never completed | Already cleaned up — see errors log |
+| OpenRouter API key (Aoun's own, $0.50 limit) | used 2026-11-22 | ~$0.01-0.05 of real spend (well under the $0.50 limit) — the only non-zero cost in this entire project | New, for this project — used only as an ephemeral shell env var, never written to any file or committed | No further cleanup needed — key was never persisted anywhere, nothing to delete |
+| `research/runs/openai_gpt-oss-20b__temp-{0.4,0.8}__singleSegment-{true,false}.json` (4 files) | created 2026-11-22 | small (text), committed to git | New | No — keep, real experimental data |
 
 Errors log (append here as they happen, don't lose this context):
 - **2026-11-16 — `gpt-oss:20b` pull aborted.** Tried pulling the actual
@@ -374,6 +409,23 @@ Errors log (append here as they happen, don't lose this context):
   resumed. Fix: `ollama serve` restarts it in a few seconds. If a harness
   run fails with `ECONNREFUSED` to `localhost:11434`, check this first
   before assuming a code bug.
+- **2026-11-22 — first OpenRouter key had a $0.00 usage limit, briefly
+  masked by an unrelated retry-logic bug.** Full harness run against
+  `openai/gpt-oss-20b` via OpenRouter failed with
+  `LLM 400: ...llama3:8b is not a valid model ID` — looked like a config
+  bug at first. Root cause via direct `curl` with the identical payload:
+  the key itself had "Key limit exceeded (total limit)... $0.00 of $0.00
+  used" — an account/key issue, not a code bug. The confusing
+  `llama3:8b`-not-valid error was a side effect of `Brain.respond()`'s
+  retry logic: any retry (even for an unrelated transient error) sets
+  `useDefaultModel=true`, and the fallback model name is
+  `llmConfig.model`, hardcoded to Ollama's `'llama3:8b'` default unless
+  `LLM_MODEL` is set — invalid on OpenRouter, so the retry's own failure
+  masked the real original error. Not yet fixed in `brain.js` (noted as a
+  real but low-priority footgun — only matters when testing against a
+  non-Ollama endpoint without `LLM_MODEL` set). Resolved by Aoun supplying
+  a second key with an explicit $0.50 limit, verified working via `curl`
+  before rerunning the full harness.
 
 ## 6. Machine specs (checked 2026-11-16 — no bottleneck expected)
 
@@ -421,8 +473,22 @@ that happens — no rush, it's not on the critical path.
 ## 8. Status
 
 **Current status (2026-11-22): A1-A8 done, plus a second strengthening
-pass after external review.** Public GitHub repo live at
+pass after external review, plus a third update after actually testing
+the real production model.** Public GitHub repo live at
 github.com/m-aoun/voice-agent-research.
+
+**Biggest update since the last status note:** acted on the Gemini
+review's suggestion to test the real production model (`openai/gpt-oss-20b`
+via OpenRouter → Groq) instead of leaving it as an untested limitation.
+After a $0-limit key diagnosis (see A3's update above and the errors log),
+Aoun's second key (working, $0.50 limit) let the full harness run for real:
+**0/33 additional triggers, bringing RQ2's total to 0/85 across three
+models — the single biggest limitation the paper previously acknowledged
+is now closed.** `paper.md` fully updated for consistency (Abstract,
+Methodology, Results, Discussion's new binomial-probability paragraph,
+Threats to Validity, Future Work, Conclusion), including correcting the
+paper's own earlier blanket "zero cost" claims to "predominantly free,
+one real-but-negligible-cost exception" now that this test exists.
 
 Aoun shared a Gemini review of the draft. Treated it as untrusted input to
 verify, not as ground truth — checked every factual claim before acting:
