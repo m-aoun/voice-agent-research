@@ -375,11 +375,22 @@ Everything is paid in the real world, but we don't need to spend anything:
       template, portal, blind-review status, publication/indexing). Key
       takeaway: **SERA 2026 already happened; the real target is SERA
       2027 (UNLV, May 26-28 2027), full-paper deadline ~Feb 26, 2027.**
-- [ ] **A11 (deferred — needs B3 first, not a blocker for anything above).**
-      Once Aoun hands over fresh free-tier Deepgram/Groq-OpenRouter/Cartesia
-      keys, run the same small batch (50-100 calls) through the real cloud
-      stack and add that single comparison column to the paper. Pure
-      upgrade, not required to finish A1-A10.
+- [x] **A11 — CANCELLED (Aoun, 2026-11-22).** Was: once Aoun hands over
+      fresh free-tier Deepgram/Groq-OpenRouter/Cartesia keys, run a small
+      batch (50-100 calls) through the real cloud stack and add that as a
+      single comparison column to the paper. Aoun pointed out the
+      OpenRouter key he'd already given (used for A3's update) could cover
+      the LLM leg — asked whether to do a partial version with just that.
+      Claude's advice, which Aoun accepted: **skip it entirely**, don't do
+      the partial version either. RQ1 already has a legitimate comparison
+      (this work's local-stack numbers against the published literature's
+      cloud figures — Salesforce, the telecom paper); a live cloud-stack
+      replication would mostly re-confirm already-published numbers for a
+      modest sample, not worth the added time against the real goal of
+      getting the paper submission-ready. The partial/hybrid option (cloud
+      LLM only, local STT/TTS) was actively rejected as scientifically
+      messy — a condition that doesn't match anything else in the paper
+      and is hard to interpret cleanly. **Removed from status.html.**
 
 ### B — Aoun does these
 - [ ] **B1 (revised after A3's finding).** Original plan was hand-labeling
@@ -397,9 +408,10 @@ Everything is paid in the real world, but we don't need to spend anything:
       (not a rubber stamp) plus a full web novelty check — see A7's
       strengthening commit. Aoun can still read `paper/paper.md` at any
       point and flag anything, this isn't a permanent waiver.
-- [ ] **B3.** If/when we need the small cloud-API sample for RQ1: create
-      fresh, research-only Deepgram / Groq or OpenRouter / Cartesia free-tier
-      accounts (NOT the live business's keys) and hand the keys over.
+- [x] **B3 — CANCELLED (2026-11-22), same decision as A11.** Was: create
+      fresh, research-only Deepgram / Groq or OpenRouter / Cartesia
+      free-tier accounts for the cloud-API comparison sample. No longer
+      needed since A11 itself was cancelled.
 - [ ] **B4.** Send the outreach message to Dr. Sadiq on WeChat once A8 is
       ready, and relay his response back.
 - [ ] **B5.** Handle the IEEE SERA submission portal / account / ORCID
@@ -597,8 +609,16 @@ rather than silently changed), and the real target venue/deadline is
 confirmed — **SERA 2027 at UNLV, full-paper deadline ~Feb 26, 2027**
 (SERA 2026 already happened). Full details in §1 and in A9/A10 above.
 
+A11/B3 (the deferred cloud-API comparison sample) were **cancelled**
+the same day, by Aoun's decision on Claude's advice — RQ1's existing
+comparison against published literature figures is legitimate on its
+own, and a live cloud-stack replication (or worse, a partial hybrid
+using just the OpenRouter LLM leg Aoun had already supplied a key for)
+wasn't worth the added complexity against the goal of getting the paper
+submission-ready soon.
+
 **Next action: B4 — Aoun sends the outreach message whenever ready, then
-relays Dr. Sadiq's response back.** That's the only task left that isn't
-either done or blocked on Aoun/Dr. Sadiq's own timeline (B1/B3/B5/B6 are
-all optional or far downstream; A11 is deferred and needs B3 first).
-Check `status.html` for the live-updated task-by-task picture.
+relays Dr. Sadiq's response back.** That's the only task left in the
+entire project that isn't done, cancelled, or on Dr. Sadiq's own timeline
+(B1/B5/B6 are optional or far downstream). Check `status.html` for the
+live-updated task-by-task picture.
