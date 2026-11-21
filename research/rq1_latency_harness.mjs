@@ -46,6 +46,8 @@ Rules:
 
 // A fixed set of single-turn caller lines — enough to get a stable latency
 // distribution without needing the multi-turn scenario structure RQ2 uses.
+// n=30 (not 10) specifically so p90 is a meaningful statistic rather than
+// just "the 9th of 10 values."
 const CALLER_LINES = [
   "Hi, I'd like to book an appointment for a check-up.",
   'Do you accept Blue Cross insurance?',
@@ -57,6 +59,26 @@ const CALLER_LINES = [
   "What's your address?",
   'Is Dr. Patel available this week?',
   'Can you fax a referral letter for me?',
+  'What time do you close on weekdays?',
+  'Do I need a referral to see a specialist here?',
+  'Can my daughter be seen without me present?',
+  'Is there a charge for cancelling an appointment?',
+  'Do you offer same-day sick visits?',
+  'Can you send my records to another clinic?',
+  'Is parking available on site?',
+  'Do you accept new patients right now?',
+  'What should I bring to my first appointment?',
+  'Can I get a prescription refill without a visit?',
+  'How long does a typical physical take?',
+  'Do you have a pediatrician on staff?',
+  'Is telehealth an option for follow-ups?',
+  'Can I pay my copay over the phone?',
+  'What vaccines do you currently have in stock?',
+  'Is there a waitlist for same-week appointments?',
+  'Can you confirm my appointment time for tomorrow?',
+  'Do you test for strep throat on site?',
+  'Is Dr. Patel taking new patients?',
+  'Can I switch my appointment to a different provider?',
 ];
 
 const MODELS = (process.env.HARNESS_MODELS || 'llama3:8b').split(',').map((s) => s.trim()).filter(Boolean);

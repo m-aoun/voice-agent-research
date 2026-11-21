@@ -1,128 +1,328 @@
 {
   "summary": {
     "model": "llama3:8b",
-    "n": 10,
+    "n": 30,
     "sttMs": {
-      "p50": 939.2938613891602,
-      "p90": 1197.1309185028076
+      "p50": 770.0746059417725,
+      "p90": 837.3074531555176
     },
     "llmFirstTokenMs": {
-      "p50": 1199,
-      "p90": 1583
+      "p50": 1115,
+      "p90": 1176
     },
     "llmFirstSentenceMs": {
-      "p50": 10732,
-      "p90": 13188
+      "p50": 7392,
+      "p90": 11760
     },
     "ttsMs": {
-      "p50": 196.64239883422852,
-      "p90": 390.35868644714355
+      "p50": 259.6898078918457,
+      "p90": 416.3353443145752
     },
     "totalMs": {
-      "p50": 11656.91364479065,
-      "p90": 14553.12565612793
+      "p50": 8417.399040222168,
+      "p90": 12833.011335372925
     }
   },
   "turns": [
     {
       "callerLine": "Hi, I'd like to book an appointment for a check-up.",
       "transcribedAs": "Hi, I'd like to book an appointment for a checkup",
-      "firstSentence": "I can help you schedule a checkup appointment!",
-      "sttMs": 1197.1309185028076,
-      "llmFirstTokenMs": 1583,
-      "llmFirstSentenceMs": 13188,
-      "ttsMs": 167.99473762512207,
-      "totalMs": 14553.12565612793
+      "firstSentence": "We're happy to help you with that!",
+      "sttMs": 892.4353122711182,
+      "llmFirstTokenMs": 1298,
+      "llmFirstSentenceMs": 12855,
+      "ttsMs": 125.69880485534668,
+      "totalMs": 13873.134117126465
     },
     {
       "callerLine": "Do you accept Blue Cross insurance?",
       "transcribedAs": "Do you accept Blue Cross Insurance?",
-      "firstSentence": "Yes, we do accept Blue Cross insurance.",
-      "sttMs": 939.2938613891602,
-      "llmFirstTokenMs": 1058,
-      "llmFirstSentenceMs": 2853,
-      "ttsMs": 196.64239883422852,
-      "totalMs": 3988.9362602233887
+      "firstSentence": "Yes, we do accept Blue Cross Insurance.",
+      "sttMs": 719.2854881286621,
+      "llmFirstTokenMs": 1081,
+      "llmFirstSentenceMs": 3440,
+      "ttsMs": 181.17141723632812,
+      "totalMs": 4340.45690536499
     },
     {
       "callerLine": "I need to reschedule my appointment from Friday.",
-      "transcribedAs": "I need to reschedule my appointment from Friday.",
-      "firstSentence": "Let me check our schedule for you.",
-      "sttMs": 1033.1592559814453,
-      "llmFirstTokenMs": 1409,
-      "llmFirstSentenceMs": 11876,
-      "ttsMs": 175.85372924804688,
-      "totalMs": 13085.012985229492
+      "transcribedAs": "I need to schedule my appointment from Friday.",
+      "firstSentence": "The Lakeview Family Clinic is open on Fridays from 9am-5pm.",
+      "sttMs": 732.2466373443604,
+      "llmFirstTokenMs": 1145,
+      "llmFirstSentenceMs": 8260,
+      "ttsMs": 269.423246383667,
+      "totalMs": 9261.669883728027
     },
     {
       "callerLine": "Are you open on Saturdays?",
       "transcribedAs": "Are you open on Saturdays?",
       "firstSentence": "Yes, we are open on Saturdays from 9am to 1pm.",
-      "sttMs": 887.6073360443115,
-      "llmFirstTokenMs": 1199,
-      "llmFirstSentenceMs": 4593,
-      "ttsMs": 281.8446159362793,
-      "totalMs": 5762.451951980591
+      "sttMs": 735.4769706726074,
+      "llmFirstTokenMs": 1037,
+      "llmFirstSentenceMs": 3921,
+      "ttsMs": 213.25969696044922,
+      "totalMs": 4869.736667633057
     },
     {
       "callerLine": "How much does a regular visit cost without insurance?",
       "transcribedAs": "How much does a regular visit cost without insurance?",
-      "firstSentence": "Our standard office visit fee is $50.",
-      "sttMs": 927.2172451019287,
-      "llmFirstTokenMs": 1160,
-      "llmFirstSentenceMs": 7062,
-      "ttsMs": 226.1674404144287,
-      "totalMs": 8215.384685516357
+      "firstSentence": "Our standard office visit fee is $50 without insurance coverage.",
+      "sttMs": 768.9402103424072,
+      "llmFirstTokenMs": 1115,
+      "llmFirstSentenceMs": 4245,
+      "ttsMs": 243.22032928466797,
+      "totalMs": 5257.160539627075
     },
     {
       "callerLine": "Can I get a flu shot today?",
       "transcribedAs": "Can I get a flu shot today?",
-      "firstSentence": "Yes, we're open today from 9am to 1pm.",
-      "sttMs": 1027.559757232666,
-      "llmFirstTokenMs": 1298,
-      "llmFirstSentenceMs": 12240,
-      "ttsMs": 225.27313232421875,
-      "totalMs": 13492.832889556885
+      "firstSentence": "We're open from 9am to 5pm, Monday through Friday.",
+      "sttMs": 770.0746059417725,
+      "llmFirstTokenMs": 1086,
+      "llmFirstSentenceMs": 11745,
+      "ttsMs": 238.16800117492676,
+      "totalMs": 12753.2426071167
     },
     {
       "callerLine": "Do you do walk-ins?",
       "transcribedAs": "Do you do walk-ins?",
       "firstSentence": "We accept walk-ins during our operating hours, Monday-Friday 9am-5pm and Saturday 9am-1pm.",
-      "sttMs": 945.4467296600342,
-      "llmFirstTokenMs": 1080,
-      "llmFirstSentenceMs": 6982,
-      "ttsMs": 390.35868644714355,
-      "totalMs": 8317.805416107178
+      "sttMs": 739.6364212036133,
+      "llmFirstTokenMs": 1033,
+      "llmFirstSentenceMs": 7291,
+      "ttsMs": 386.7626190185547,
+      "totalMs": 8417.399040222168
     },
     {
       "callerLine": "What's your address?",
       "transcribedAs": "What's your address?",
       "firstSentence": "Our clinic is located at 100 Main Street.",
-      "sttMs": 870.8992004394531,
+      "sttMs": 740.3676509857178,
       "llmFirstTokenMs": 973,
-      "llmFirstSentenceMs": 2675,
-      "ttsMs": 190.6299591064453,
-      "totalMs": 3736.5291595458984
+      "llmFirstSentenceMs": 3697,
+      "ttsMs": 173.7663745880127,
+      "totalMs": 4611.1340255737305
     },
     {
       "callerLine": "Is Dr. Patel available this week?",
       "transcribedAs": "Is Dr. Patel available this week?",
       "firstSentence": "Dr.",
-      "sttMs": 856.1644554138184,
-      "llmFirstTokenMs": 1193,
-      "llmFirstSentenceMs": 11232,
-      "ttsMs": 99.0896224975586,
-      "totalMs": 12187.254077911377
+      "sttMs": 741.6956424713135,
+      "llmFirstTokenMs": 992,
+      "llmFirstSentenceMs": 7392,
+      "ttsMs": 70.25623321533203,
+      "totalMs": 8203.951875686646
     },
     {
       "callerLine": "Can you fax a referral letter for me?",
       "transcribedAs": "Can you fax a referral letter for me?",
-      "firstSentence": "I can help you with that!",
-      "sttMs": 819.8685646057129,
-      "llmFirstTokenMs": 1241,
-      "llmFirstSentenceMs": 10732,
-      "ttsMs": 105.04508018493652,
-      "totalMs": 11656.91364479065
+      "firstSentence": "I can assist you with that!",
+      "sttMs": 756.5188407897949,
+      "llmFirstTokenMs": 1077,
+      "llmFirstSentenceMs": 10891,
+      "ttsMs": 101.3956069946289,
+      "totalMs": 11748.914447784424
+    },
+    {
+      "callerLine": "What time do you close on weekdays?",
+      "transcribedAs": "What time do you close on weekdays?",
+      "firstSentence": "We close at 5pm on weekdays.",
+      "sttMs": 767.0114040374756,
+      "llmFirstTokenMs": 1038,
+      "llmFirstSentenceMs": 2606,
+      "ttsMs": 144.5751190185547,
+      "totalMs": 3517.5865230560303
+    },
+    {
+      "callerLine": "Do I need a referral to see a specialist here?",
+      "transcribedAs": "Do I need a referral to see a specialist here?",
+      "firstSentence": "No, you do not need a referral to see a specialist at Lakeview Family Clinic.",
+      "sttMs": 793.6036586761475,
+      "llmFirstTokenMs": 1083,
+      "llmFirstSentenceMs": 8294,
+      "ttsMs": 233.43896865844727,
+      "totalMs": 9321.042627334595
+    },
+    {
+      "callerLine": "Can my daughter be seen without me present?",
+      "transcribedAs": "Can my daughter be seen without me present?",
+      "firstSentence": "Yes, we can accommodate minors without a parent or guardian present, but it's always best to have a parent or legal guardian accompany them if possible.",
+      "sttMs": 772.6759910583496,
+      "llmFirstTokenMs": 1139,
+      "llmFirstSentenceMs": 11644,
+      "ttsMs": 416.3353443145752,
+      "totalMs": 12833.011335372925
+    },
+    {
+      "callerLine": "Is there a charge for cancelling an appointment?",
+      "transcribedAs": "Is there a charge for cancelling an appointment?",
+      "firstSentence": "No, there is no charge to cancel or reschedule an appointment at Lakeview Family Clinic.",
+      "sttMs": 773.7720012664795,
+      "llmFirstTokenMs": 1176,
+      "llmFirstSentenceMs": 4672,
+      "ttsMs": 304.9473762512207,
+      "totalMs": 5750.7193775177
+    },
+    {
+      "callerLine": "Do you offer same-day sick visits?",
+      "transcribedAs": "Do you offer same-day sick visits?",
+      "firstSentence": "Yes, we do offer same-day appointments for minor illnesses and injuries.",
+      "sttMs": 729.7759056091309,
+      "llmFirstTokenMs": 1136,
+      "llmFirstSentenceMs": 6181,
+      "ttsMs": 293.7610149383545,
+      "totalMs": 7204.536920547485
+    },
+    {
+      "callerLine": "Can you send my records to another clinic?",
+      "transcribedAs": "Can you send my records to another clinic?",
+      "firstSentence": "Yes, we can transfer your medical records to another clinic.",
+      "sttMs": 775.1808166503906,
+      "llmFirstTokenMs": 1080,
+      "llmFirstSentenceMs": 9455,
+      "ttsMs": 188.03048133850098,
+      "totalMs": 10418.211297988892
+    },
+    {
+      "callerLine": "Is parking available on site?",
+      "transcribedAs": "Is parking available on site?",
+      "firstSentence": "Yes, parking is available on-site at Lakeview Family Clinic, located at 100 Main Street.",
+      "sttMs": 774.2276191711426,
+      "llmFirstTokenMs": 999,
+      "llmFirstSentenceMs": 4650,
+      "ttsMs": 301.7885684967041,
+      "totalMs": 5726.016187667847
+    },
+    {
+      "callerLine": "Do you accept new patients right now?",
+      "transcribedAs": "Do you accept new patients right now?",
+      "firstSentence": "Yes, we do accept new patients and usually have same-week appointment availability.",
+      "sttMs": 759.8707675933838,
+      "llmFirstTokenMs": 984,
+      "llmFirstSentenceMs": 6902,
+      "ttsMs": 259.6898078918457,
+      "totalMs": 7921.5605754852295
+    },
+    {
+      "callerLine": "What should I bring to my first appointment?",
+      "transcribedAs": "What should I bring to my first appointment?",
+      "firstSentence": "For your first appointment, please arrive 15 minutes early and bring a valid government-issued ID, insurance card (if applicable), and any relevant medical records or test results.",
+      "sttMs": 784.4359874725342,
+      "llmFirstTokenMs": 1142,
+      "llmFirstSentenceMs": 9062,
+      "ttsMs": 571.4871883392334,
+      "totalMs": 10417.923175811768
+    },
+    {
+      "callerLine": "Can I get a prescription refill without a visit?",
+      "transcribedAs": "Can I get a prescription refill without a visit?",
+      "firstSentence": "Yes, we can help you with a prescription refill over the phone or through our patient portal.",
+      "sttMs": 832.5777053833008,
+      "llmFirstTokenMs": 1166,
+      "llmFirstSentenceMs": 6967,
+      "ttsMs": 276.3850688934326,
+      "totalMs": 8075.962774276733
+    },
+    {
+      "callerLine": "How long does a typical physical take?",
+      "transcribedAs": "How long does a typical physical take?",
+      "firstSentence": "A typical annual physical usually takes around 30-45 minutes to complete.",
+      "sttMs": 864.0134334564209,
+      "llmFirstTokenMs": 1128,
+      "llmFirstSentenceMs": 4926,
+      "ttsMs": 285.43639183044434,
+      "totalMs": 6075.449825286865
+    },
+    {
+      "callerLine": "Do you have a pediatrician on staff?",
+      "transcribedAs": "Do you have a pediatrician on staff?",
+      "firstSentence": "Yes, Lakeview Family Clinic has pediatricians on our medical team who provide care for children from birth to adolescence.",
+      "sttMs": 774.2865085601807,
+      "llmFirstTokenMs": 1174,
+      "llmFirstSentenceMs": 5469,
+      "ttsMs": 373.5222816467285,
+      "totalMs": 6616.808790206909
+    },
+    {
+      "callerLine": "Is telehealth an option for follow-ups?",
+      "transcribedAs": "Is telehealth an option for follow-ups?",
+      "firstSentence": "Yes, we do offer telehealth options for follow-up appointments and consultations.",
+      "sttMs": 773.3592987060547,
+      "llmFirstTokenMs": 1095,
+      "llmFirstSentenceMs": 6403,
+      "ttsMs": 294.7876453399658,
+      "totalMs": 7471.1469440460205
+    },
+    {
+      "callerLine": "Can I pay my copay over the phone?",
+      "transcribedAs": "Can I pay my copy over the phone?",
+      "firstSentence": "I'm happy to help!",
+      "sttMs": 837.3074531555176,
+      "llmFirstTokenMs": 1222,
+      "llmFirstSentenceMs": 9672,
+      "ttsMs": 82.52382278442383,
+      "totalMs": 10591.831275939941
+    },
+    {
+      "callerLine": "What vaccines do you currently have in stock?",
+      "transcribedAs": "What vaccines do you currently have in stock?",
+      "firstSentence": "We have a standard selection of childhood immunizations such as MMR, DTaP, and Hib, as well as adult vaccinations like flu shots and pneumococcal conjugate vaccine.",
+      "sttMs": 746.6187477111816,
+      "llmFirstTokenMs": 1077,
+      "llmFirstSentenceMs": 11760,
+      "ttsMs": 538.7303829193115,
+      "totalMs": 13045.349130630493
+    },
+    {
+      "callerLine": "Is there a waitlist for same-week appointments?",
+      "transcribedAs": "Is there a waitlist for same week appointments?",
+      "firstSentence": "We typically have same-week appointments available, and we don't usually keep a formal waitlist.",
+      "sttMs": 755.8977603912354,
+      "llmFirstTokenMs": 1109,
+      "llmFirstSentenceMs": 9847,
+      "ttsMs": 282.30905532836914,
+      "totalMs": 10885.206815719604
+    },
+    {
+      "callerLine": "Can you confirm my appointment time for tomorrow?",
+      "transcribedAs": "Can you confirm my appointment time for tomorrow?",
+      "firstSentence": "I'd be happy to help!",
+      "sttMs": 747.2758293151855,
+      "llmFirstTokenMs": 1119,
+      "llmFirstSentenceMs": 11774,
+      "ttsMs": 87.38517761230469,
+      "totalMs": 12608.66100692749
+    },
+    {
+      "callerLine": "Do you test for strep throat on site?",
+      "transcribedAs": "Do you test for strep throat on site?",
+      "firstSentence": "Yes, we do offer lab draws and testing for strep throat on-site at Lakeview Family Clinic.",
+      "sttMs": 828.742504119873,
+      "llmFirstTokenMs": 1154,
+      "llmFirstSentenceMs": 5151,
+      "ttsMs": 316.29157066345215,
+      "totalMs": 6296.034074783325
+    },
+    {
+      "callerLine": "Is Dr. Patel taking new patients?",
+      "transcribedAs": "Is Dr. Patel taking new patients?",
+      "firstSentence": "Yes, Dr.",
+      "sttMs": 748.0010986328125,
+      "llmFirstTokenMs": 1153,
+      "llmFirstSentenceMs": 7663,
+      "ttsMs": 83.46056938171387,
+      "totalMs": 8494.461668014526
+    },
+    {
+      "callerLine": "Can I switch my appointment to a different provider?",
+      "transcribedAs": "Can I switch my appointment to a different provider?",
+      "firstSentence": "Yes, you can definitely request to see a different provider.",
+      "sttMs": 786.9846820831299,
+      "llmFirstTokenMs": 1142,
+      "llmFirstSentenceMs": 10660,
+      "ttsMs": 217.65613555908203,
+      "totalMs": 11664.640817642212
     }
   ]
 }

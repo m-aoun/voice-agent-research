@@ -25,10 +25,11 @@ unchecked, would be spoken aloud as if the caller had actually said those
 things. We study both concerns using a real, working AI phone-receptionist
 system's production code, instrumented to run entirely on a free, local
 stack (Ollama, faster-whisper, Piper) so every result here is independently
-reproducible at zero cost. For latency (RQ1), we find our local
-time-to-first-token is only 1.5-2.4x slower than published cloud figures
-despite running on a 4GB consumer laptop GPU, but sustained token throughput
-(time-to-first-complete-sentence) is the dominant cost, 7.5-10.7 seconds —
+reproducible at zero cost. For latency (RQ1, n=30 turns per model), we
+find our local time-to-first-token is only 1.4-1.7x slower than published
+cloud figures despite running on a 4GB consumer laptop GPU, but sustained
+token throughput (time-to-first-complete-sentence) is the dominant cost,
+6.2-7.4 seconds at the median —
 the real gap between a free/local stack and specialized inference providers
 like Groq is throughput, not startup latency. For reliability (RQ2), we
 evaluate a lightweight, already-deployed runtime heuristic
@@ -154,6 +155,38 @@ agents remains an open problem, but neither directly studies the
 self-dialogue failure mode or its mitigation; we treat barge-in-style
 evaluation as future work (Section 7).
 
+**Adjacent, differently-scoped reliability work.** Two recent papers are
+close enough to warrant explicitly distinguishing from this work. Dubey [8]
+studies real-time detection and repair of *task-level* agent failures in
+tool-using agents (LangGraph/AutoGen-style loops), using a statistical
+anomaly-detection method (an echo-state-network ensemble with CUSUM
+alarms) over execution traces, with rollback-and-retry as the repair
+action — a different failure class (task/tool execution, not
+conversational turn-taking) and a different method (statistical, not
+lexical) from ours. DialFork [9] introduces a large benchmark (36,278
+dialogues) for *procedural* hallucination — fluent but process-drifting
+dialogue — evaluated with purpose-built flow-similarity metrics; this is
+closer in spirit to our concern with conversational structure, but is an
+offline benchmark-construction effort, not a live production defense
+mechanism, and targets gradual process drift rather than the specific,
+discrete glued-turn pattern we study. We are not aware of work combining a
+live, deployed, lightweight runtime detector with an empirical study of
+when the specific self-dialogue/turn-usurping pattern does and does not
+occur, which is the gap this paper addresses.
+
+**Local voice-agent latency benchmarking.** We are aware of one prior,
+non-peer-reviewed benchmark using a very similar free/local stack: the
+`voice-latency-lab` project [10] measures Ollama + faster-whisper + Piper
+on macOS, reporting a notably faster local time-to-first-token
+(~250-270ms) and total time-to-first-audio (~800ms at p50) than our
+figures. We read this gap as most likely a hardware effect — that
+benchmark runs on Apple Silicon with unified memory and Metal acceleration,
+whereas ours runs on a Windows laptop with a 4GB discrete GPU not large
+enough to hold either tested model fully in VRAM — and discuss it further
+in Section 6. To our knowledge, no peer-reviewed study places a free/local
+cascaded stack in direct, decomposed comparison against the specific
+published cloud benchmarks [1], [2] we compare against here.
+
 ## 3. System Description
 
 The system under study is a working AI phone-receptionist pipeline,
@@ -238,7 +271,9 @@ playback can begin in the real pipeline; and (4) TTS latency, synthesizing
 that first sentence with Piper. STT and TTS inference run against a warm,
 persistent local server (`research/stt_tts_server.py`) so that one-time
 model-load cost is excluded from the measured per-call latency. For each
-model, one warm-up turn is run and discarded before the ten measured turns,
+model, one warm-up turn is run and discarded before the thirty measured
+turns (increased from an initial pilot of ten, specifically so p90 is a
+meaningful statistic rather than just the 9th of 10 raw values),
 for the same reason on the LLM side (Ollama unloads idle models after a
 timeout, so the first call after a server restart pays a model-load cost
 not representative of steady-state operation).
@@ -268,8 +303,10 @@ pattern this heuristic targets, and is out of scope for this paper.
 
 | Model | STT (p50/p90, ms) | LLM first-token (p50/p90, ms) | LLM first-sentence (p50/p90, ms) | TTS (p50/p90, ms) | Total (p50/p90, ms) |
 |---|---|---|---|---|---|
-| llama3:8b | 939 / 1197 | 1199 / 1583 | 10732 / 13188 | 197 / 390 | 11657 / 14553 |
-| qwen2.5:7b | 1024 / 1204 | 1138 / 1495 | 7572 / 9825 | 254 / 370 | 8830 / 11280 |
+| llama3:8b | 770 / 837 | 1115 / 1176 | 7392 / 11760 | 260 / 416 | 8417 / 12833 |
+| qwen2.5:7b | 770 / 855 | 953 / 1108 | 6151 / 7988 | 225 / 347 | 7161 / 8983 |
+
+(n=30 turns per model.)
 
 Compared against the two published cloud benchmarks:
 
@@ -277,31 +314,55 @@ Compared against the two published cloud benchmarks:
 |---|---|---|---|---|
 | Salesforce AI Research [1], cloud cascade | ~337ms | — (TTFA only) | — | 755ms (TTFA) |
 | Telecom voice agents [2], cloud cascade | 50ms | 670ms (avg) | 280ms | ~1000ms |
-| This work — llama3:8b, local/free | 939ms | **1199ms** | 274ms | 11657ms |
-| This work — qwen2.5:7b, local/free | 1024ms | **1138ms** | 254ms | 8830ms |
+| This work — llama3:8b, local/free | 770ms | **1115ms** | 260ms | 8417ms |
+| This work — qwen2.5:7b, local/free | 770ms | **953ms** | 225ms | 7161ms |
+
+**A note on the "Total" column:** this is not a single apples-to-apples
+quantity across rows. The literature's "Total"/TTFA is time to first audio,
+gated by the LLM's *first token*. Our "Total" is gated by the LLM's first
+*complete sentence*, because that is the quantity that actually determines
+when our TTS leg can start in this pipeline's design (Section 3). The
+**LLM first-token / TTFT column is the one directly comparable** across all
+four rows; we report Total for completeness, not as a single clean
+benchmark number.
 
 ## 6. Discussion
 
 **Latency.** The headline finding is not that our free/local stack is
 slower overall — it is, by roughly an order of magnitude — but *where* the
-gap actually is. STT is 3-20x slower than the cloud figures, consistent
-with running batch CPU inference (faster-whisper) rather than a
-GPU-accelerated streaming service (Deepgram). TTS (Piper) is, perhaps
-surprisingly, competitive with the cloud figures (197-390ms vs. 100-280ms),
-suggesting a well-chosen free local TTS engine is not a meaningful
-bottleneck for this use case. The more interesting result is on the LLM
-leg: time-to-first-token (1.1-1.6s) is only 1.5-2.4x slower than the
-telecom paper's reported LLM average of 670ms, despite running on a
-consumer laptop with only 4GB of VRAM — a much smaller relative gap than we
-expected going in. The real cost is sustained generation speed:
-time-to-first-complete-sentence balloons to 7.5-10.7 seconds, meaning that
-once generation starts, our local setup produces tokens far more slowly
-than cloud providers do. This is a plausible, concrete explanation for why
+gap actually is. STT is 2.3x slower than the Salesforce figure (337ms) and
+15.4x slower than the telecom paper's figure (50ms), consistent with
+running batch CPU inference (faster-whisper) rather than a GPU-accelerated
+streaming service (Deepgram). TTS (Piper) is, perhaps surprisingly,
+competitive with the cloud figures (225-260ms vs. 100-280ms), suggesting a
+well-chosen free local TTS engine is not a meaningful bottleneck for this
+use case. The more interesting result is on the LLM leg:
+time-to-first-token (953-1115ms at the median, n=30) is only 1.4-1.7x
+slower than the telecom paper's reported LLM average of 670ms, despite
+running on a consumer laptop with only 4GB of VRAM — a much smaller
+relative gap than we expected going in. The real cost is sustained
+generation speed: time-to-first-complete-sentence balloons to 6.2-7.4
+seconds at the median (and up to 11.8s at p90), meaning that once
+generation starts, our local setup produces tokens far more slowly than
+cloud providers do. This is a plausible, concrete explanation for why
 production voice-agent systems — including the one this paper's code is
 drawn from — route LLM inference through providers like Groq even when
 using open-weight models: the advantage is not in getting started, it is in
 how fast tokens keep arriving once started, which is precisely what
 specialized inference hardware is built for.
+
+This is corroborated, and usefully complicated, by comparison against the
+`voice-latency-lab` benchmark [10] (Section 2), which measures a similar
+free/local stack (Ollama, faster-whisper, Piper) but reports a local
+time-to-first-token of only ~250-270ms — close to the cloud figures, and
+roughly 4x faster than our median. That benchmark runs on Apple Silicon
+with unified memory and Metal GPU acceleration; ours runs on a Windows
+laptop with a 4GB discrete GPU too small to hold either tested model
+entirely in VRAM, forcing partial CPU offload. Taken together, the two
+results suggest that "free/local" is not one latency profile but a range
+that depends heavily on the specific hardware's memory architecture — a
+caveat we did not anticipate before running this comparison, and one we
+think is independently worth reporting (Section 7).
 
 **Reliability.** We report RQ2 plainly as a negative result: the specific
 failure mode the production heuristic was built to catch did not occur, at
@@ -325,20 +386,49 @@ study, and negative replication results about when a failure mode does or
 does not occur are exactly the kind of evidence that should accumulate in
 this area, rather than only positive "our mitigation works" claims.
 
-## 7. Limitations
+## 7. Threats to Validity
 
+We follow the standard construct/internal/external validity framing used
+in empirical software engineering research, since that is the lens this
+paper's claims should be read through.
+
+**Construct validity** (are we measuring what we claim to measure?)
+- Our "LLM time-to-first-sentence" is a deliberate design choice — it is
+  the quantity that actually gates TTS start in this pipeline — but it is
+  *not* the same construct as the literature's time-to-first-audio/TTFT,
+  and we do not present it as directly comparable without the caveat given
+  in Section 5.2. Only the first-token metric is presented as a direct,
+  like-for-like comparison.
+- "Self-dialogue hallucination" is operationalized narrowly, as what the
+  `GLUED_SEGMENT` heuristic is designed to catch (a glued second
+  conversational turn). The one observed factual fabrication (Section 5.1)
+  is a genuine hallucination by any general definition but is outside this
+  construct, and we do not count it toward RQ2's result either way.
+
+**Internal validity** (could something other than what we claim explain
+the result?)
 - **The production model was not tested directly.** The original system's
   LLM is a specific reasoning model served via a specific provider; we
   tested two different, general-purpose open-weight models instead,
   because the production model was not locally available within the time
   and bandwidth constraints of this work (a 13GB download at the available
-  connection speed was not practical during this study — see repository
-  history for details). This is the single most important open question
-  this paper leaves for future work.
-- **Sample size.** 52 turns for RQ2 and 10 turns per model for RQ1 are
-  sufficient to support the specific claims made here but are small
+  connection speed was not practical during this study). This is the
+  single most important open question this paper leaves for future work,
+  and the main reason RQ2's negative result must be read as a boundary
+  condition rather than a general claim about LLMs in this role.
+- The manual verification that RQ2's negative result is a true negative
+  (Section 5.1) was performed by one of the authors, not an independent or
+  blinded rater. For a result this central to the paper's framing, this is
+  a real limitation we are not able to fully resolve within this draft;
+  the raw transcripts are published specifically so readers can verify this
+  claim themselves.
+
+**External validity** (how far do these results generalize?)
+- **Sample size.** 52 turns for RQ2 and n=30 turns per model for RQ1 are
+  enough to support the specific, narrow claims made here but are small
   relative to the kind of large-scale benchmark a dedicated reliability
-  study (e.g., [6], [7]) would use.
+  study (e.g., [6], [7]) would use, and do not claim to generalize beyond
+  the two tested models.
 - **Synthetic, scripted conversations.** All caller inputs are
   hand-authored scenarios, not real call transcripts, and all RQ1 "caller
   audio" is itself synthetic (TTS-generated), not real human speech. Real
@@ -347,8 +437,15 @@ this area, rather than only positive "our mitigation works" claims.
 - **CPU-bound STT is not representative of a production streaming STT
   service.** Our STT numbers characterize a free/local substitute, not an
   attempt to match Deepgram's architecture.
-- **Single machine, single run per condition.** We do not report
-  variance across hardware or across repeated runs of the same condition.
+- **Single machine, single hardware configuration.** Latency figures are
+  specific to the test machine described in Section 4; we do not report
+  variance across hardware. This is not a minor caveat: an independent
+  benchmark of a similar stack on different hardware [10] reports
+  time-to-first-token roughly 4x faster than ours (Section 6), which we
+  attribute to unified-memory/Metal acceleration vs. a small discrete GPU
+  with partial CPU offload. Our absolute numbers should be read as
+  characterizing *this specific hardware class*, not "the free/local
+  stack" in general.
 
 ## 8. Future Work
 
@@ -401,6 +498,18 @@ cited as industry context, not as a scientific claim.)
 Domains," arXiv:2603.13686, 2026.
 
 [7] Boson AI, "IHBench," arXiv:2606.19595, 2026.
+
+[8] S. Dubey, "Real-Time Detection and Repair of LLM Agent Failures,"
+arXiv:2608.02464, 2026.
+
+[9] S. Burdisso, E. Villatoro-Tello, D. Sánchez-Cortés, Y. Labrak, J.
+Luque, M. Cernak, and P. Motlicek, "DialFork: Going Beyond Factuality to
+Evaluate Procedural Hallucination in Conversational Agents,"
+arXiv:2610.21561, 2026.
+
+[10] O. Ozfe, "voice-latency-lab: Where the time goes in a local
+voice-agent turn (STT → LLM → TTS)," github.com/oguzhanozfe/voice-latency-lab,
+2026. (Not peer-reviewed; cited as the closest comparable benchmark found.)
 
 ---
 

@@ -75,7 +75,7 @@ out += `
 
 Manually spot-checked raw (singleSegment=false) replies — confirmed true negatives (the models produced single, well-formed turns; no invented caller dialogue), not missed detections by the heuristic.
 
-## RQ1 — Latency (milliseconds, p50 / p90, n=10 turns per model + 1 discarded warm-up turn)
+## RQ1 — Latency (milliseconds, p50 / p90, n=${rq1Summaries[0]?.n ?? '?'} turns per model + 1 discarded warm-up turn)
 
 | Model | STT | LLM first-token | LLM first-sentence | TTS | Total |
 |---|---|---|---|---|---|
@@ -93,8 +93,12 @@ out += `
 |---|---|---|---|---|
 | Salesforce AI Research (arXiv 2603.05413), cloud cascade | ~337ms | — (TTFA only) | — | 755ms (TTFA) |
 | Telecom voice agents (arXiv 2508.04721), cloud cascade | 50ms | 670ms (avg) | 280ms | ~1000ms |
-| **This work — llama3:8b, local/free** | 939 (p50) | **1199 (p50)** | 274 (p50, TTS) — *see note* | 11657 (p50) |
-| **This work — qwen2.5:7b, local/free** | 1024 (p50) | **1138 (p50)** | 254 (p50) | 8830 (p50) |
+`;
+for (const s of rq1Summaries) {
+  out += `| **This work — ${s.model}, local/free** | ${s.sttMs.p50.toFixed(0)} (p50) | **${s.llmFirstTokenMs.p50.toFixed(0)} (p50)** | ${s.ttsMs.p50.toFixed(0)} (p50) | ${s.totalMs.p50.toFixed(0)} (p50) |
+`;
+}
+out += `
 
 Note: "Total" for this work includes LLM time-to-first-**sentence** (not
 first-token), since that's what actually gates when TTS can start speaking
