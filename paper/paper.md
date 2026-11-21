@@ -1,9 +1,10 @@
 # Real-Time Self-Dialogue Hallucination Detection in Cascaded LLM Voice Agents: A Latency and Reliability Case Study
 
-**Authors:** Muhammad Aoun Shabbir¹, [Muhammad Sadiq²] *(co-authorship pending confirmation — draft circulated for review before any author list is finalized)*
+**Authors:** Muhammad Aoun Shabbir¹, [second author — name withheld here
+until co-authorship is confirmed]²
 
 ¹ Independent researcher
-² Shenzhen University of Information Technology (SUIT), Shenzhen, China
+² Affiliation to be added if/when co-authorship is confirmed.
 
 **Draft status:** working draft, not yet submitted anywhere. All results in
 this draft are real, reproducible, and generated from the code and data in

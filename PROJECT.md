@@ -90,8 +90,8 @@ detect/stop it, compared to no detection at all?
     Publishing Services and submitted for indexing in EI, INSPEC, and
     DBLP" (EasyChair's own wording). IEEE Xplore itself isn't explicitly
     named on either page — reasonable to assume given IEEE Conference
-    Publishing Services, but not a direct quote, so don't state it to Dr.
-    Sadiq as 100% confirmed without one more check.
+    Publishing Services, but not a direct quote, so don't state it to the
+    prospective co-author as 100% confirmed without one more check.
   - **Attendance/fees:** not clearly stated whether an author must attend
     in person for a non-best-paper submission (the "hybrid" format and an
     "Online Presentation Coordinating Chair" role both suggest remote
@@ -101,55 +101,53 @@ detect/stop it, compared to no detection at all?
   - **Takeaway for timeline:** paper needs to be submission-ready by
     **~Feb 26, 2027** for this specific edition. That's a realistic amount
     of runway from where the draft is now (2026-11-22).
-- **arXiv preprint** — do this regardless, immediately once there's a solid
-  draft. Zero gatekeeping, free, instant, citable even before/without formal
-  peer review.
-- Possible journal extension later: **IEEE Access** — Dr. Sadiq already has
-  2 papers there, so he'd be comfortable with that specific venue's process.
+- **arXiv preprint** — **hold off until the co-author question is
+  resolved** (2026-11-22 revision of this plan). arXiv submissions are
+  citable and effectively permanent/public once posted, including the
+  author list at the time of posting — submitting with a placeholder or
+  wrong author list isn't a clean thing to walk back the way an
+  in-progress GitHub repo is. Do this once the author list is final, not
+  before.
+- Possible journal extension later: **IEEE Access** — the prospective
+  co-author already has papers there, so they'd be comfortable with that
+  specific venue's process.
 
 ---
 
-## 2. The co-author: Dr. Muhammad Sadiq
+## 2. The prospective co-author
 
-Full profile check done (muhammad-sadiq.com, all pages, + Google Scholar).
-Key facts, don't re-research:
+**Note (2026-11-22): this section is intentionally non-identifying.**
+Aoun asked that the specific person's name/affiliation/email not appear
+anywhere in this public repo until co-authorship is actually confirmed —
+right now it isn't, and it could end up being this person or someone
+else. The real identifying details are kept privately (Claude's own
+memory, not this repo) for continuity across sessions; ask Aoun directly
+if you need them restated, or Claude already has them.
 
-- Assistant Professor, Project Director (International Affairs), Foreign
-  Technology Expert — Shenzhen University of Information Technology (SUIT).
-  Also associated with Shenzhen Research Institute of Big Data / CUHK
-  Shenzhen (appointment type unclear from the site).
-- Already has a real relationship with Aoun: taught him, was his TA
-  supervisor in 3rd year, wrote him a strong unprompted recommendation
-  letter. **Directly connected on WeChat — contact is not a bottleneck.**
-- Research areas: Computer Vision (occlusion-adaptive facial landmark
-  detection — his main line, 2019–2026, incl. CVPR 2019 as co-author, IEEE
-  Access, Pattern Recognition, Applied Intelligence) and Cybersecurity/IoT/
-  blockchain (IDS, VANET, industrial CPS — Knowledge-Based Systems,
-  Engineering Applications of AI, JNCA, GLOBECOM/WCNC).
-- **"AI & Trustworthy Intelligent Systems" is a literal named research area
-  on his /research page** — frame the paper explicitly as a Trustworthy-AI
-  contribution (reliability/safety of a deployed LLM system), not just "cool
-  voice bot," and it fits his stated focus directly. No mismatch risk.
-- Scale: h-index 15, ~1180 citations, i10-index 21 — a real, solidly
-  productive mid-career researcher. Not elite-tier, but legitimate and
-  internationally publishing. Verdict already reached: **don't go looking
-  for someone else.** A near-certain "yes" from a real, productive professor
-  beats a low-probability "maybe" from a bigger name, especially for a first
+Planning facts that don't depend on the specific person's identity:
+- A former professor of Aoun's, with a genuine pre-existing relationship
+  (taught him, supervised him, wrote him a strong unprompted
+  recommendation letter) and an existing direct line of contact — contact
+  itself is not a bottleneck.
+- A real, internationally-publishing mid-career researcher (not an
+  elite-tier name, but a legitimate, solidly productive one) whose
+  stated research focus genuinely overlaps with this paper's framing
+  (reliability/trustworthiness of a deployed LLM system) — not a forced
+  fit.
+- Actively open to new collaborators (per their own public contact page
+  and an apparently light current student load) — a near-certain "yes"
+  from a real, productive researcher was judged better than a
+  low-probability "maybe" from a bigger name, especially for a first
   publication.
-- His /contact page literally says: "Welcome opportunities for joint
-  research projects, PhD supervision, and academic partnerships."
-- His /team page lists **zero current students** — he's actively looking for
-  output/collaborators, which works in our favor.
-- Because Aoun is not currently enrolled as a student anywhere (BS not yet
-  started), Dr. Sadiq's role is **co-author / senior research collaborator**,
-  not formal "supervisor" (supervision is tied to an active degree program).
-  This is normal and common — alumni + former professor joint papers happen
-  all the time.
-- Email: sadiq@sziit.edu.cn. His site's contact form asks for an
-  institutional email, so use direct email or WeChat instead.
-- Unverified claims on his site (don't cite without checking): "Best Paper
-  Award, ICCV 2023" (no paper title given), exact nature of the CUHK
-  Shenzhen affiliation.
+- Because Aoun is not currently enrolled as a student anywhere (BS not
+  yet started), this person's role would be **co-author / senior
+  research collaborator**, not formal "supervisor" (supervision is tied
+  to an active degree program) — normal and common for alumni + former
+  professor joint papers.
+- A couple of claims found on their public site were flagged as
+  unverified and not to be cited without checking (an award claim with
+  no paper title given; the exact nature of a secondary institutional
+  affiliation).
 
 ---
 
@@ -329,17 +327,23 @@ Everything is paid in the real world, but we don't need to spend anything:
       Description, Methodology, Results (both tables straight from
       `research/RESULTS.md`), Discussion, Limitations, Future Work,
       Conclusion, References, reproducibility statement. Author list has
-      Dr. Sadiq as a bracketed placeholder — not finalized until he agrees
-      (see A8). **Needs Aoun's read-through (B2) before anything goes to
-      Dr. Sadiq** — Claude wrote the full draft but a second pair of eyes on
-      the honesty/accuracy of every claim matters more here than anywhere
-      else in this project.
-- [x] **A8.** **Done 2026-11-22.** `paper/outreach_message_dr_sadiq.md` —
-      warm, low-pressure WeChat message. References his "Trustworthy AI"
-      focus specifically, makes clear Aoun isn't asking for formal
-      supervision (not currently enrolled), links straight to the repo,
-      gives Aoun notes on tone/splitting it up before sending. **Next: B4
-      — Aoun sends it whenever ready, then relays his response back.**
+      a non-identifying bracketed placeholder for the prospective
+      co-author — not finalized until they agree (see A8). **Needs
+      Aoun's read-through (B2) before anything goes out** — Claude wrote
+      the full draft but a second pair of eyes on the honesty/accuracy of
+      every claim matters more here than anywhere else in this project.
+- [x] **A8.** **Done 2026-11-22, revised 2026-11-22.** Drafted a warm,
+      low-pressure WeChat message — references the prospective
+      co-author's "Trustworthy AI" research focus specifically, makes
+      clear Aoun isn't asking for formal supervision (not currently
+      enrolled), links straight to the repo. **Revision:** the message
+      was initially saved as a file under `paper/` and committed to git
+      — removed from the repo (see A9's 2026-11-22 redaction note) since
+      its filename and content named the specific person and this repo
+      is public with co-authorship unconfirmed. The message itself is
+      handed to Aoun directly (not stored in this repo); Claude has it
+      in conversation if it needs regenerating. **Next: B4 — Aoun sends
+      it whenever ready, then relays the response back.**
 - [x] **A9.** **Done 2026-11-22.** Prepped the repo for publication:
       - Scanned the full git history (`git log --all -p | grep`) for any
         accidentally committed API key patterns (OpenRouter's `sk-or-v1-...`
@@ -431,14 +435,14 @@ Everything is paid in the real world, but we don't need to spend anything:
       fresh, research-only Deepgram / Groq or OpenRouter / Cartesia
       free-tier accounts for the cloud-API comparison sample. No longer
       needed since A11 itself was cancelled.
-- [ ] **B4.** Send the outreach message to Dr. Sadiq on WeChat once A8 is
-      ready, and relay his response back.
+- [ ] **B4.** Send the outreach message to the prospective co-author on
+      WeChat once A8 is ready, and relay their response back.
 - [ ] **B5.** Handle the IEEE SERA submission portal / account / ORCID
       linking personally when we actually submit.
 - [ ] **B6.** (Separate track, not blocking this project) Keep handling the
       St. Cloud State I-20 / F1 visa process on his own timeline.
 
-### C — Joint, once Dr. Sadiq is on board
+### C — Joint, once a co-author is on board
 - [ ] **C1.** Share the draft + real results with him for review as
       co-author.
 - [ ] **C2.** Incorporate his feedback (methodology, extra citations he may
@@ -644,7 +648,22 @@ reproduces 3-of-4 times in local models and 0-of-4 times in the
 production model. Fixed in `paper/paper.md`.
 
 **Next action: B4 — Aoun sends the outreach message whenever ready, then
-relays Dr. Sadiq's response back.** That's the only task left in the
-entire project that isn't done, cancelled, or on Dr. Sadiq's own timeline
-(B5/B6 are far downstream). Check `status.html` for the live-updated
-task-by-task picture.
+relays the prospective co-author's response back.** That's the only task
+left in the entire project that isn't done, cancelled, or on that
+person's own timeline (B5/B6 are far downstream). Check `status.html`
+for the live-updated task-by-task picture.
+
+**2026-11-22, privacy revision:** Aoun asked that this person's name,
+affiliation, and email not appear anywhere in this public repo since
+co-authorship isn't confirmed yet — it could end up being them or
+someone else. Redacted §2, the paper's author line, `status.html`, and
+removed the file that had named them directly from the repo (see A8/A9
+notes above). The real identifying details are kept in Claude's private
+memory, not this repo, for continuity. **Caveat that still needs a
+decision from Aoun:** this redaction only affects the current state of
+the files — the person's real name, email, and affiliation are still
+visible in this repo's git history (specifically the commit that added
+the outreach-message file, plus earlier commits). Fully scrubbing that
+would require rewriting git history and force-pushing, which wasn't
+done without Aoun's explicit go-ahead since it's a destructive operation
+on a shared/public remote.
