@@ -258,9 +258,12 @@ Everything is paid in the real world, but we don't need to spend anything:
       Dr. Sadiq** — Claude wrote the full draft but a second pair of eyes on
       the honesty/accuracy of every claim matters more here than anywhere
       else in this project.
-- [ ] **A8.** Draft the outreach message to Dr. Sadiq (WeChat-appropriate,
-      short, references his "Trustworthy AI" research area specifically) for
-      Aoun to send once there's a solid draft + real results to show.
+- [x] **A8.** **Done 2026-11-22.** `paper/outreach_message_dr_sadiq.md` —
+      warm, low-pressure WeChat message. References his "Trustworthy AI"
+      focus specifically, makes clear Aoun isn't asking for formal
+      supervision (not currently enrolled), links straight to the repo,
+      gives Aoun notes on tone/splitting it up before sending. **Next: B4
+      — Aoun sends it whenever ready, then relays his response back.**
 - [ ] **A9.** Prepare the GitHub repo for publication: clean code, README,
       LICENSE, check target venue's blind-review policy before making author
       names visible if needed.
@@ -282,8 +285,12 @@ Everything is paid in the real world, but we don't need to spend anything:
       ("genuinely clean, not a missed detection") — a quick sanity check,
       not exhaustive labeling. Not blocking — can happen whenever Aoun has a
       few minutes.
-- [ ] **B2.** Review paper sections as they're drafted — sanity-check claims,
-      flag anything that doesn't match reality.
+- [x] **B2 (delegated back to Claude, 2026-11-22).** Aoun said "I don't
+      need to read it, you read it — just make sure it's heavy enough to
+      actually get accepted." Claude did a genuinely critical self-review
+      (not a rubber stamp) plus a full web novelty check — see A7's
+      strengthening commit. Aoun can still read `paper/paper.md` at any
+      point and flag anything, this isn't a permanent waiver.
 - [ ] **B3.** If/when we need the small cloud-API sample for RQ1: create
       fresh, research-only Deepgram / Groq or OpenRouter / Cartesia free-tier
       accounts (NOT the live business's keys) and hand the keys over.
@@ -413,10 +420,17 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-21): A1-A7 done — first full paper draft
-exists.** Public GitHub repo live at github.com/m-aoun/voice-agent-research.
-`paper/paper.md` is a complete draft: abstract through references, real
-numbers throughout, nothing hand-waved. **Next action: B2 — Aoun needs to
-read the full draft before it goes anywhere near Dr. Sadiq.** After that:
-**A8** (draft the actual outreach message referencing specific parts of the
-paper). Check `status.html` for the live-updated task-by-task picture.
+**Current status (2026-11-22): A1-A8 done.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research. Aoun delegated B2 (the critical
+read-through) back to Claude — did a genuinely critical self-review
+instead of rubber-stamping, found and fixed 3 real weaknesses (RQ1 sample
+size too small for p90 claims, a results-table honesty gap, Limitations
+not in the SE-standard Threats-to-Validity format), plus did a full
+novelty check (no scooping found; 3 new citations added honestly,
+including one benchmark that beats our numbers on different hardware — a
+strength, not something buried). `paper/outreach_message_dr_sadiq.md` is
+ready. **Next action: B4 — Aoun sends the outreach message whenever ready,
+then relays Dr. Sadiq's response back.** A9/A10 (arXiv + GitHub publication
+prep, IEEE SERA submission research) can happen in parallel, not blocked
+on his response. Check `status.html` for the live-updated task-by-task
+picture.
