@@ -240,14 +240,14 @@ Everything is paid in the real world, but we don't need to spend anything:
         to generate, it's in how fast tokens keep coming after that.
       - TTS: 197-390ms — competitive with cloud TTS (100-280ms). Piper is a
         genuinely good free/local choice for this leg specifically.
-- [ ] **A6.** Analyze results: both A3 (RQ2, 52 turns, 0 self-dialogue
-      events — report as a clean negative result) and A5 (RQ1, already has
-      real p50/p90 numbers and a comparison against the two arXiv papers,
-      see the A5 entry) are already analyzed inline above, so A6 is really
-      about turning those into clean final tables/figures for the paper
-      draft, not fresh computation. The paper is fully writable from this
-      point on — the cloud sample below only adds one extra comparison
-      column later.
+- [x] **A6.** **Done 2026-11-21.** Built `research/analyze_results.mjs` —
+      reads all raw `research/runs/*.json` files and generates
+      `research/RESULTS.md` programmatically (no hand-transcription, so no
+      copy errors). Confirms: RQ2 = 0/52 turns triggered, RQ1 tables exactly
+      match the numbers already in the A5 entry above. `research/RESULTS.md`
+      is now the single source of truth A7 draws its numbers from. The
+      cloud sample (A11) below only adds one extra comparison column later
+      — not needed to finish the paper.
 - [ ] **A7.** Draft the full paper — Intro, Related Work (literature above),
       Methodology, Results, Discussion, Limitations, Conclusion — with real
       numbers, not placeholders.
