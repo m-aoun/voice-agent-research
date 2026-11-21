@@ -81,7 +81,7 @@
 <script>
 // Edit this object each time something changes, then commit. Status values:
 // "done" | "progress" | "blocked" | "todo"
-const LAST_UPDATED = "2026-11-21 23:40 PKT";
+const LAST_UPDATED = "2026-11-22 00:30 PKT";
 
 const tasks = {
   A: [
@@ -90,16 +90,16 @@ const tasks = {
     { id: "A3", status: "done", text: "Run RQ2 experiments across all scenarios/models/modes", note: "8 full runs (2 models x 2 temps x 2 modes), 52 turns, 0 errors. Finding: 0/52 triggered the self-dialogue cut. DECIDED (Aoun, 2026-11-21): report honestly as a negative/boundary result, don't chase gpt-oss:20b further — priority is publishing soon." },
     { id: "A4", status: "done", text: "Install Piper TTS, build local STT+LLM+TTS pipeline", note: "piper-tts installed, en_US-amy-medium voice downloaded, research/stt_tts_server.py built (warm server, faster-whisper + Piper). Hit and fixed a real PyAV incompatibility — see PROJECT.md errors log." },
     { id: "A5", status: "done", text: "Run RQ1 latency experiments on the local stack", note: "Real numbers for llama3:8b and qwen2.5:7b — STT ~0.9-1.2s, LLM first-token ~1.1-1.6s (close to cloud!), LLM first-sentence 7.5-10.7s (the real bottleneck), TTS 197-390ms (competitive with cloud). Full table in PROJECT.md." },
-    { id: "A6", status: "todo", text: "Finalize analysis into clean tables/figures for the paper" },
-    { id: "A7", status: "todo", text: "Draft the full paper" },
+    { id: "A6", status: "done", text: "Finalize analysis into clean tables/figures for the paper", note: "research/analyze_results.mjs generates research/RESULTS.md directly from raw data — no hand-transcription." },
+    { id: "A7", status: "done", text: "Draft the full paper", note: "paper/paper.md — complete first draft, all sections, real numbers. Needs Aoun's read-through (B2) before it goes to Dr. Sadiq." },
     { id: "A8", status: "todo", text: "Draft outreach message to Dr. Sadiq" },
     { id: "A9", status: "todo", text: "Prepare GitHub repo for publication" },
     { id: "A10", status: "todo", text: "Research IEEE SERA submission requirements" },
     { id: "A11", status: "todo", text: "(Deferred) Cloud-API comparison sample — needs B3 first" },
   ],
   B: [
-    { id: "B1", status: "todo", text: "Hand-label the generated transcripts from A3" },
-    { id: "B2", status: "todo", text: "Review paper sections as they're drafted" },
+    { id: "B1", status: "todo", text: "Hand-label the generated transcripts from A3", note: "Revised: A3 found 0/52 self-dialogue events, so this is now just an optional spot-check of 10-15 transcripts, not exhaustive labeling. Not blocking." },
+    { id: "B2", status: "progress", text: "Review the full paper draft (paper/paper.md)", note: "THE ACTIVE BLOCKER — nothing goes to Dr. Sadiq until this happens." },
     { id: "B3", status: "todo", text: "Create fresh free-tier cloud API keys (research-only, not the business's)" },
     { id: "B4", status: "todo", text: "Send outreach message to Dr. Sadiq on WeChat, relay his response" },
     { id: "B5", status: "todo", text: "Handle IEEE SERA submission portal / account personally" },
@@ -121,6 +121,8 @@ const log = [
   { ts: "2026-11-21 20:30", text: "Discussed gpt-oss:20b with Aoun — confirmed it would technically run on this machine (MoE architecture, 32GB RAM is enough) but download speed is the real blocker. DECISION: write RQ2 as an honest negative/boundary result, don't chase gpt-oss further. Priority is publishing a good paper soon." },
   { ts: "2026-11-21 23:00", text: "A4 done. Installed piper-tts (pip), downloaded en_US-amy-medium voice. Built research/stt_tts_server.py — a warm HTTP server keeping faster-whisper + Piper loaded so latency numbers reflect real per-call inference, not model-load time. Hit a real PyAV/faster-whisper incompatibility (metadata_errors kwarg removed in PyAV 19.x, and no prebuilt wheel exists for the older version on this Python 3.14) — fixed by decoding WAV with stdlib wave + numpy instead of going through PyAV at all. Logged in PROJECT.md." },
   { ts: "2026-11-21 23:40", text: "A5 done. research/rq1_latency_harness.mjs built and run against llama3:8b and qwen2.5:7b (10 turns each + 1 discarded warm-up turn). Also hit the Ollama server being down after the earlier gpt-oss pull-kill — ollama serve restarted it in seconds. Added time-to-first-token as a separate metric from time-to-first-sentence in src/brain.js (small additive change, onFirstToken hook) for direct comparability with the literature. Real finding: LLM first-token latency is surprisingly close to cloud (~1.5-2.4x slower); the real gap is sustained token throughput (first-sentence completion, 7.5-10.7s); TTS (Piper) is competitive with cloud TTS. Full table in PROJECT.md. Next: A6 (write up final tables for the paper)." },
+  { ts: "2026-11-22 00:15", text: "A6 done. research/analyze_results.mjs generates research/RESULTS.md programmatically from every raw run file — confirms RQ2 = 0/52 and the RQ1 tables exactly, no hand-transcription anywhere." },
+  { ts: "2026-11-22 00:30", text: "A7 done — first full paper draft. paper/paper.md: abstract through references, 7 citations, both result tables, honest negative-result framing for RQ2, full limitations section (including the untested gpt-oss model as the biggest open question). Author list has Dr. Sadiq bracketed as pending. B2 (Aoun's read-through) is now the active blocker before anything moves toward Dr. Sadiq or A8 (outreach message)." },
 ];
 
 const badgeLabel = { done: "DONE", progress: "IN PROGRESS", blocked: "BLOCKED", todo: "NOT STARTED" };

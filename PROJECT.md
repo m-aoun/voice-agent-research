@@ -248,9 +248,16 @@ Everything is paid in the real world, but we don't need to spend anything:
       is now the single source of truth A7 draws its numbers from. The
       cloud sample (A11) below only adds one extra comparison column later
       — not needed to finish the paper.
-- [ ] **A7.** Draft the full paper — Intro, Related Work (literature above),
-      Methodology, Results, Discussion, Limitations, Conclusion — with real
-      numbers, not placeholders.
+- [x] **A7.** **Done 2026-11-21 — first full draft.** `paper/paper.md`:
+      Abstract, Intro, Related Work (all 7 citations from §1), System
+      Description, Methodology, Results (both tables straight from
+      `research/RESULTS.md`), Discussion, Limitations, Future Work,
+      Conclusion, References, reproducibility statement. Author list has
+      Dr. Sadiq as a bracketed placeholder — not finalized until he agrees
+      (see A8). **Needs Aoun's read-through (B2) before anything goes to
+      Dr. Sadiq** — Claude wrote the full draft but a second pair of eyes on
+      the honesty/accuracy of every claim matters more here than anywhere
+      else in this project.
 - [ ] **A8.** Draft the outreach message to Dr. Sadiq (WeChat-appropriate,
       short, references his "Trustworthy AI" research area specifically) for
       Aoun to send once there's a solid draft + real results to show.
@@ -406,14 +413,10 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-21): A1-A5 done.** Public GitHub repo live at
-github.com/m-aoun/voice-agent-research. RQ2's negative result (A3) and its
-write-up framing are **settled** — Aoun confirmed 2026-11-21: write it
-honestly, don't chase gpt-oss further, priority is publishing a good paper
-soon. RQ1 has real local latency numbers now (A5) with an interesting,
-explainable story (LLM time-to-first-token is competitive with cloud; the
-real gap is sustained token throughput; TTS is competitive). Next action:
-**A6** (analysis — write up RQ1's and RQ2's findings properly, build the
-final comparison tables; not blocked on B1 anymore since B1 is now just an
-optional spot-check, not a hard dependency). Check `status.html` for the
-live-updated task-by-task picture.
+**Current status (2026-11-21): A1-A7 done — first full paper draft
+exists.** Public GitHub repo live at github.com/m-aoun/voice-agent-research.
+`paper/paper.md` is a complete draft: abstract through references, real
+numbers throughout, nothing hand-waved. **Next action: B2 — Aoun needs to
+read the full draft before it goes anywhere near Dr. Sadiq.** After that:
+**A8** (draft the actual outreach message referencing specific parts of the
+paper). Check `status.html` for the live-updated task-by-task picture.
