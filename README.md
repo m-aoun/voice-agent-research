@@ -16,6 +16,23 @@ for the LLM, [faster-whisper](https://github.com/SYSTRAN/faster-whisper) for
 STT, and [Piper](https://github.com/rhasspy/piper) for TTS — no paid API
 required to reproduce the core experiments.
 
+## Reproducing the experiments
+
+```bash
+npm install  # none needed — zero dependencies, plain Node.js 22+
+
+# RQ2 — self-dialogue hallucination (needs Ollama running locally)
+HARNESS_MODELS=llama3:8b,qwen2.5:7b HARNESS_TEMPERATURES=0.4,0.8 \
+  node research/hallucination_harness.mjs
+
+# RQ1 — latency (needs the warm STT/TTS server running first)
+pip install faster-whisper piper-tts
+python research/stt_tts_server.py &
+HARNESS_MODELS=llama3:8b,qwen2.5:7b node research/rq1_latency_harness.mjs
+```
+
+Results land in `research/runs/*.json`.
+
 ## Status
 
 This is a work in progress. See `status.html` (open it in a browser) for a

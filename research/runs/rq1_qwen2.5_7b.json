@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "model": "qwen2.5:7b",
+    "n": 10,
+    "sttMs": {
+      "p50": 1024.1115093231201,
+      "p90": 1204.0517330169678
+    },
+    "llmFirstTokenMs": {
+      "p50": 1138,
+      "p90": 1495
+    },
+    "llmFirstSentenceMs": {
+      "p50": 7572,
+      "p90": 9825
+    },
+    "ttsMs": {
+      "p50": 253.53217124938965,
+      "p90": 369.8270320892334
+    },
+    "totalMs": {
+      "p50": 8830.042573928833,
+      "p90": 11280.101251602173
+    }
+  },
+  "turns": [
+    {
+      "callerLine": "Hi, I'd like to book an appointment for a check-up.",
+      "transcribedAs": "Hi, I'd like to book an appointment for a checkup",
+      "firstSentence": "Sure, we can help with that.",
+      "sttMs": 1100.3308296203613,
+      "llmFirstTokenMs": 1249,
+      "llmFirstSentenceMs": 5695,
+      "ttsMs": 130.049467086792,
+      "totalMs": 6925.380296707153
+    },
+    {
+      "callerLine": "Do you accept Blue Cross insurance?",
+      "transcribedAs": "Do you accept Blue Cross Insurance?",
+      "firstSentence": "Yes, we accept Blue Cross Insurance.",
+      "sttMs": 1077.3732662200928,
+      "llmFirstTokenMs": 1138,
+      "llmFirstSentenceMs": 6165,
+      "ttsMs": 174.9436855316162,
+      "totalMs": 7417.316951751709
+    },
+    {
+      "callerLine": "I need to reschedule my appointment from Friday.",
+      "transcribedAs": "I need to reschedule my appointment from Friday.",
+      "firstSentence": "Sure, let's move that to a different day.",
+      "sttMs": 1204.0517330169678,
+      "llmFirstTokenMs": 1495,
+      "llmFirstSentenceMs": 9825,
+      "ttsMs": 251.04951858520508,
+      "totalMs": 11280.101251602173
+    },
+    {
+      "callerLine": "Are you open on Saturdays?",
+      "transcribedAs": "Are you open on Saturdays?",
+      "firstSentence": "Yes, we are open on Saturdays from 9am to 1pm.",
+      "sttMs": 1005.8019161224365,
+      "llmFirstTokenMs": 1019,
+      "llmFirstSentenceMs": 5605,
+      "ttsMs": 253.53217124938965,
+      "totalMs": 6864.334087371826
+    },
+    {
+      "callerLine": "How much does a regular visit cost without insurance?",
+      "transcribedAs": "How much does a regular visit cost without insurance?",
+      "firstSentence": "The cost for a regular visit without insurance varies and would need to be discussed directly with the clinic.",
+      "sttMs": 915.9789085388184,
+      "llmFirstTokenMs": 1153,
+      "llmFirstSentenceMs": 9298,
+      "ttsMs": 369.8270320892334,
+      "totalMs": 10583.805940628052
+    },
+    {
+      "callerLine": "Can I get a flu shot today?",
+      "transcribedAs": "Can I get a flu shot today?",
+      "firstSentence": "We can give you a flu shot today if we have availability.",
+      "sttMs": 975.9988784790039,
+      "llmFirstTokenMs": 1029,
+      "llmFirstSentenceMs": 7572,
+      "ttsMs": 282.0436954498291,
+      "totalMs": 8830.042573928833
+    },
+    {
+      "callerLine": "Do you do walk-ins?",
+      "transcribedAs": "Do you do walk-ins?",
+      "firstSentence": "Same-week appointments are usually available for new patients.",
+      "sttMs": 1024.1115093231201,
+      "llmFirstTokenMs": 883,
+      "llmFirstSentenceMs": 4289,
+      "ttsMs": 299.94869232177734,
+      "totalMs": 5613.0602016448975
+    },
+    {
+      "callerLine": "What's your address?",
+      "transcribedAs": "What's your address?",
+      "firstSentence": "Our address is 100 Main Street.",
+      "sttMs": 906.0823917388916,
+      "llmFirstTokenMs": 1077,
+      "llmFirstSentenceMs": 4188,
+      "ttsMs": 311.5203380584717,
+      "totalMs": 5405.602729797363
+    },
+    {
+      "callerLine": "Is Dr. Patel available this week?",
+      "transcribedAs": "Is Dr. Patel available this week?",
+      "firstSentence": "I don't have specific doctor availability information.",
+      "sttMs": 963.5281562805176,
+      "llmFirstTokenMs": 1180,
+      "llmFirstSentenceMs": 8276,
+      "ttsMs": 247.1170425415039,
+      "totalMs": 9486.645198822021
+    },
+    {
+      "callerLine": "Can you fax a referral letter for me?",
+      "transcribedAs": "Can you fax a referral letter for me?",
+      "firstSentence": "I can help coordinate that for you.",
+      "sttMs": 1034.8374843597412,
+      "llmFirstTokenMs": 1082,
+      "llmFirstSentenceMs": 7667,
+      "ttsMs": 181.8985939025879,
+      "totalMs": 8883.73607826233
+    }
+  ]
+}

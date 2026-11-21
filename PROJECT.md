@@ -199,20 +199,55 @@ Everything is paid in the real world, but we don't need to spend anything:
       model needing special handling) or to the OpenRouter/Groq serving
       path, not a universal behavior across LLMs. Tried pulling `gpt-oss:20b`
       locally to test this directly — aborted, see §5 errors log (connection
-      too slow, 13GB/2+hrs). **Open question for A6/A7:** report this
-      honestly as a negative/boundary result, and/or revisit the gpt-oss
-      pull later on better bandwidth.
-- [ ] **A4.** Install Piper TTS locally; build a local STT+LLM+TTS
-      instrumented pipeline (faster-whisper + Ollama + Piper) to measure
-      per-component latency for RQ1.
-- [ ] **A5.** Run RQ1 latency experiments on the **local stack only**
-      (faster-whisper + Ollama + Piper) — 100% free, no new accounts needed.
-      This alone gives a real "self-hosted baseline" number.
-- [ ] **A6.** Analyze results: score the `GLUED_SEGMENT` heuristic's accuracy
-      against Aoun's hand labels (B1); compute local latency percentiles;
-      build comparison tables against the arXiv papers above using the local
-      numbers. The paper is fully writable from this point on — the cloud
-      sample below only adds one extra comparison column later.
+      too slow, 13GB/2+hrs).
+      **Decision (2026-11-21, Aoun):** write it as an honest negative/
+      boundary result — "we built this heuristic because we saw the problem
+      in production, but it doesn't reproduce in general-purpose open
+      models" is itself a real, citable finding. Main goal is publishing a
+      good paper, not chasing the gpt-oss download further right now. Do
+      NOT revisit gpt-oss:20b unless it comes up naturally later — it's not
+      blocking anything.
+- [x] **A4.** Install Piper TTS locally; build a local STT+LLM+TTS
+      instrumented pipeline. **Done 2026-11-21.** `pip install piper-tts`,
+      downloaded `en_US-amy-medium` voice (~63MB). Built
+      `research/stt_tts_server.py` — a warm local HTTP server (faster-whisper
+      + Piper loaded once) so latency measurements reflect real per-call
+      inference time, not one-time model load. Hit a real error here, see §5.
+- [x] **A5.** Run RQ1 latency experiments on the local stack. **Done
+      2026-11-21.** `research/rq1_latency_harness.mjs` measures STT, LLM
+      time-to-first-token, LLM time-to-first-sentence, and TTS separately,
+      per turn, across `llama3:8b` and `qwen2.5:7b` (10 turns each + 1
+      discarded warm-up turn to exclude Ollama's cold-load cost). Real
+      results (p50 / p90, milliseconds):
+
+      | | STT | LLM first-token | LLM first-sentence | TTS | Total |
+      |---|---|---|---|---|---|
+      | llama3:8b | 939 / 1197 | 1199 / 1583 | 10732 / 13188 | 197 / 390 | 11657 / 14553 |
+      | qwen2.5:7b | 1024 / 1204 | 1138 / 1495 | 7572 / 9825 | 254 / 370 | 8830 / 11280 |
+
+      **Comparison to literature (PROJECT.md §1):** vs Salesforce's 755ms
+      TTFA and the telecom paper's STT=50ms/LLM=670ms/TTS=280ms —
+      - STT: 3-20x slower (CPU batch faster-whisper vs GPU streaming
+        Deepgram — expected).
+      - **LLM time-to-first-token is only ~1.5-2.4x slower than cloud**
+        (1.1-1.6s vs 0.67s) — closer than expected, suggests the T1200 GPU
+        is meaningfully helping even at just 4GB VRAM.
+      - **LLM time-to-first-SENTENCE is the real bottleneck** (7.5-10.7s) —
+        once generation starts, sustained tokens/sec is far behind
+        Groq-class specialized inference hardware. This is the honest
+        explanation for why production voice systems lean on providers like
+        Groq even when using open-weight models: the gap isn't in starting
+        to generate, it's in how fast tokens keep coming after that.
+      - TTS: 197-390ms — competitive with cloud TTS (100-280ms). Piper is a
+        genuinely good free/local choice for this leg specifically.
+- [ ] **A6.** Analyze results: both A3 (RQ2, 52 turns, 0 self-dialogue
+      events — report as a clean negative result) and A5 (RQ1, already has
+      real p50/p90 numbers and a comparison against the two arXiv papers,
+      see the A5 entry) are already analyzed inline above, so A6 is really
+      about turning those into clean final tables/figures for the paper
+      draft, not fresh computation. The paper is fully writable from this
+      point on — the cloud sample below only adds one extra comparison
+      column later.
 - [ ] **A7.** Draft the full paper — Intro, Related Work (literature above),
       Methodology, Results, Discussion, Limitations, Conclusion — with real
       numbers, not placeholders.
@@ -231,9 +266,15 @@ Everything is paid in the real world, but we don't need to spend anything:
       upgrade, not required to finish A1-A10.
 
 ### B — Aoun does these
-- [ ] **B1.** Hand-label the generated transcripts from A3 — mark which
-      replies are genuine self-dialogue/hallucination vs legitimate. (Claude
-      will prepare this as a fast, simple format — not raw JSON staring.)
+- [ ] **B1 (revised after A3's finding).** Original plan was hand-labeling
+      transcripts for self-dialogue vs legitimate replies — but A3 found
+      0/52 turns had any self-dialogue, so there's nothing to label in the
+      traditional sense (no positive/negative split to score against).
+      Lighter version instead: spot-check maybe 10-15 of the raw transcripts
+      in `research/runs/*.json` to independently confirm Claude's own read
+      ("genuinely clean, not a missed detection") — a quick sanity check,
+      not exhaustive labeling. Not blocking — can happen whenever Aoun has a
+      few minutes.
 - [ ] **B2.** Review paper sections as they're drafted — sanity-check claims,
       flag anything that doesn't match reality.
 - [ ] **B3.** If/when we need the small cloud-API sample for RQ1: create
@@ -275,7 +316,9 @@ don't let it go stale.
 | `E:\voice-agent-research\` folder + `PROJECT.md` | 2026-11-16 | ~20KB | New | No — this is the deliverable itself |
 | Ollama models (`llama3:8b`, `qwen2.5:7b`, `deepseek-coder:6.7b`) | already present before this project | ~14GB total | **Pre-existing** — not installed for this project, don't delete on cleanup, they're shared/general-purpose | No |
 | `faster-whisper` (pip package) | already present before this project | small | **Pre-existing** | No |
-| Piper TTS | not yet installed — coming in A4 | TBD, usually small (binary + voice model, tens of MB) | New, for this project | **Yes — safe to uninstall after the paper's done** |
+| `piper-tts` (pip) + `pathvalidate` dep | 2026-11-21 | ~34MB wheel | New, for this project | **Yes** — `pip uninstall piper-tts pathvalidate` |
+| `en_US-amy-medium` Piper voice model | 2026-11-21 | ~63MB, in `models/piper/` (committed to git — it's a published open-source voice model, no license issue, and needed for anyone to reproduce the experiment) | New, for this project | No — part of the reproducible artifact, keep it |
+| `faster-whisper`'s cached `base.en` model (HuggingFace cache, `~/.cache/huggingface/`) | 2026-11-21 | ~145MB | New, for this project (the pip package was pre-existing, this cached model download is not) | **Yes** — safe to delete from the HF cache after the paper's done, if not reused elsewhere |
 | `node_modules` inside `E:\voice-agent-research\` (once `npm install` runs) | not yet created — coming in A1/A2 | TBD | New | **Yes — delete the whole project folder's node_modules, or the folder entirely, once done, if not needed anymore** |
 | Experiment run logs (`research/runs/*.json`) | created in A3 (2026-11-16) | small (text), all committed to git | New | No — keep, this is the actual experimental data for the paper |
 | `gpt-oss:20b` Ollama model pull (the real production model) | attempted 2026-11-16, **aborted** | 0GB (was going to be ~13GB) | N/A — never completed | Already cleaned up — see errors log |
@@ -294,6 +337,29 @@ Errors log (append here as they happen, don't lose this context):
   **Revisit this later if/when on a faster connection** — it would let RQ2
   test the actual production model locally instead of only comparable
   general-purpose models.
+- **2026-11-21 — `faster-whisper` + PyAV incompatible on this Python
+  version.** `model.transcribe('file.wav')` threw
+  `TypeError: open() got an unexpected keyword argument 'metadata_errors'`
+  — faster-whisper 1.2.1's `decode_audio()` calls `av.open(..., metadata_errors=...)`,
+  a kwarg the installed PyAV 19.0.2 removed. Tried downgrading
+  (`pip install av==12.3.0`) since that's the usual fix — **failed**, no
+  prebuilt wheel exists for Python 3.14 below 19.x, and building from source
+  failed (no local FFmpeg dev headers on this machine). Reinstalled
+  `av==19.0.2` to get back to a working state.
+  **Real fix:** don't go through `av` at all — decode the WAV ourselves
+  with the stdlib `wave` module into a numpy float32 array and hand that
+  directly to `model.transcribe()` (it accepts a raw array, not just a file
+  path). Implemented in `research/stt_tts_server.py`. **Don't attempt the
+  PyAV downgrade again on this machine — it won't work, this is the
+  permanent workaround.**
+- **2026-11-21 — Ollama server died silently.** After the gpt-oss:20b pull
+  was killed (see above), the Ollama HTTP server (a separate process) was
+  also down (`curl` → connection refused) by the time the RQ1 harness ran,
+  for reasons the tool didn't fully pin down — it survived the pull-kill
+  fine right after it happened, but had stopped by the time this session
+  resumed. Fix: `ollama serve` restarts it in a few seconds. If a harness
+  run fails with `ECONNREFUSED` to `localhost:11434`, check this first
+  before assuming a code bug.
 
 ## 6. Machine specs (checked 2026-11-16 — no bottleneck expected)
 
@@ -340,8 +406,14 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-16): A1, A2, A3 done.** Public GitHub repo live at
-github.com/m-aoun/voice-agent-research. A3's finding reframes RQ2 a bit —
-see the A3 entry above and discuss with Aoun before A6/A7 (writing) commit
-to a framing). Next action: **A4** (Piper + local STT/TTS pipeline for
-RQ1). Check `status.html` for the live-updated task-by-task picture.
+**Current status (2026-11-21): A1-A5 done.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research. RQ2's negative result (A3) and its
+write-up framing are **settled** — Aoun confirmed 2026-11-21: write it
+honestly, don't chase gpt-oss further, priority is publishing a good paper
+soon. RQ1 has real local latency numbers now (A5) with an interesting,
+explainable story (LLM time-to-first-token is competitive with cloud; the
+real gap is sustained token throughput; TTS is competitive). Next action:
+**A6** (analysis — write up RQ1's and RQ2's findings properly, build the
+final comparison tables; not blocked on B1 anymore since B1 is now just an
+optional spot-check, not a hard dependency). Check `status.html` for the
+live-updated task-by-task picture.

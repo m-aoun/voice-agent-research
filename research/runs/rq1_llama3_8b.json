@@ -1,0 +1,128 @@
+{
+  "summary": {
+    "model": "llama3:8b",
+    "n": 10,
+    "sttMs": {
+      "p50": 939.2938613891602,
+      "p90": 1197.1309185028076
+    },
+    "llmFirstTokenMs": {
+      "p50": 1199,
+      "p90": 1583
+    },
+    "llmFirstSentenceMs": {
+      "p50": 10732,
+      "p90": 13188
+    },
+    "ttsMs": {
+      "p50": 196.64239883422852,
+      "p90": 390.35868644714355
+    },
+    "totalMs": {
+      "p50": 11656.91364479065,
+      "p90": 14553.12565612793
+    }
+  },
+  "turns": [
+    {
+      "callerLine": "Hi, I'd like to book an appointment for a check-up.",
+      "transcribedAs": "Hi, I'd like to book an appointment for a checkup",
+      "firstSentence": "I can help you schedule a checkup appointment!",
+      "sttMs": 1197.1309185028076,
+      "llmFirstTokenMs": 1583,
+      "llmFirstSentenceMs": 13188,
+      "ttsMs": 167.99473762512207,
+      "totalMs": 14553.12565612793
+    },
+    {
+      "callerLine": "Do you accept Blue Cross insurance?",
+      "transcribedAs": "Do you accept Blue Cross Insurance?",
+      "firstSentence": "Yes, we do accept Blue Cross insurance.",
+      "sttMs": 939.2938613891602,
+      "llmFirstTokenMs": 1058,
+      "llmFirstSentenceMs": 2853,
+      "ttsMs": 196.64239883422852,
+      "totalMs": 3988.9362602233887
+    },
+    {
+      "callerLine": "I need to reschedule my appointment from Friday.",
+      "transcribedAs": "I need to reschedule my appointment from Friday.",
+      "firstSentence": "Let me check our schedule for you.",
+      "sttMs": 1033.1592559814453,
+      "llmFirstTokenMs": 1409,
+      "llmFirstSentenceMs": 11876,
+      "ttsMs": 175.85372924804688,
+      "totalMs": 13085.012985229492
+    },
+    {
+      "callerLine": "Are you open on Saturdays?",
+      "transcribedAs": "Are you open on Saturdays?",
+      "firstSentence": "Yes, we are open on Saturdays from 9am to 1pm.",
+      "sttMs": 887.6073360443115,
+      "llmFirstTokenMs": 1199,
+      "llmFirstSentenceMs": 4593,
+      "ttsMs": 281.8446159362793,
+      "totalMs": 5762.451951980591
+    },
+    {
+      "callerLine": "How much does a regular visit cost without insurance?",
+      "transcribedAs": "How much does a regular visit cost without insurance?",
+      "firstSentence": "Our standard office visit fee is $50.",
+      "sttMs": 927.2172451019287,
+      "llmFirstTokenMs": 1160,
+      "llmFirstSentenceMs": 7062,
+      "ttsMs": 226.1674404144287,
+      "totalMs": 8215.384685516357
+    },
+    {
+      "callerLine": "Can I get a flu shot today?",
+      "transcribedAs": "Can I get a flu shot today?",
+      "firstSentence": "Yes, we're open today from 9am to 1pm.",
+      "sttMs": 1027.559757232666,
+      "llmFirstTokenMs": 1298,
+      "llmFirstSentenceMs": 12240,
+      "ttsMs": 225.27313232421875,
+      "totalMs": 13492.832889556885
+    },
+    {
+      "callerLine": "Do you do walk-ins?",
+      "transcribedAs": "Do you do walk-ins?",
+      "firstSentence": "We accept walk-ins during our operating hours, Monday-Friday 9am-5pm and Saturday 9am-1pm.",
+      "sttMs": 945.4467296600342,
+      "llmFirstTokenMs": 1080,
+      "llmFirstSentenceMs": 6982,
+      "ttsMs": 390.35868644714355,
+      "totalMs": 8317.805416107178
+    },
+    {
+      "callerLine": "What's your address?",
+      "transcribedAs": "What's your address?",
+      "firstSentence": "Our clinic is located at 100 Main Street.",
+      "sttMs": 870.8992004394531,
+      "llmFirstTokenMs": 973,
+      "llmFirstSentenceMs": 2675,
+      "ttsMs": 190.6299591064453,
+      "totalMs": 3736.5291595458984
+    },
+    {
+      "callerLine": "Is Dr. Patel available this week?",
+      "transcribedAs": "Is Dr. Patel available this week?",
+      "firstSentence": "Dr.",
+      "sttMs": 856.1644554138184,
+      "llmFirstTokenMs": 1193,
+      "llmFirstSentenceMs": 11232,
+      "ttsMs": 99.0896224975586,
+      "totalMs": 12187.254077911377
+    },
+    {
+      "callerLine": "Can you fax a referral letter for me?",
+      "transcribedAs": "Can you fax a referral letter for me?",
+      "firstSentence": "I can help you with that!",
+      "sttMs": 819.8685646057129,
+      "llmFirstTokenMs": 1241,
+      "llmFirstSentenceMs": 10732,
+      "ttsMs": 105.04508018493652,
+      "totalMs": 11656.91364479065
+    }
+  ]
+}

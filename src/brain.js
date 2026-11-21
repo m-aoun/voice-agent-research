@@ -117,6 +117,9 @@ export class Brain {
    *
    * @param {object} opts
    * @param {(sentence: string) => void} opts.onSentence
+   * @param {() => void} [opts.onFirstToken] Optional, fires once when the
+   *   first streamed content chunk arrives — for latency research only
+   *   (time-to-first-token), not used by the real call flow.
    * @param {AbortSignal} [opts.signal]
    * @returns {Promise<{ text: string, transfer: boolean, end: string|null, flag: string|null, followUp: string|null }>}
    */
@@ -143,7 +146,7 @@ export class Brain {
     return result;
   }
 
-  async #respondOnce({ onSentence, signal }, useDefaultModel = false) {
+  async #respondOnce({ onSentence, onFirstToken, signal }, useDefaultModel = false) {
     const res = await fetch(llmConfig.baseUrl, {
       method: 'POST',
       signal,
@@ -207,6 +210,8 @@ export class Brain {
 
         const delta = parsed.choices?.[0]?.delta?.content;
         if (!delta) continue;
+
+        if (onFirstToken && full === '' && spoken === '') onFirstToken();
 
         if (this.singleSegment) {
           // Look a few characters back so a boundary split across two chunks is still seen.
