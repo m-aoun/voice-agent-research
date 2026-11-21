@@ -420,17 +420,39 @@ that happens — no rush, it's not on the critical path.
 
 ## 8. Status
 
-**Current status (2026-11-22): A1-A8 done.** Public GitHub repo live at
-github.com/m-aoun/voice-agent-research. Aoun delegated B2 (the critical
-read-through) back to Claude — did a genuinely critical self-review
-instead of rubber-stamping, found and fixed 3 real weaknesses (RQ1 sample
-size too small for p90 claims, a results-table honesty gap, Limitations
-not in the SE-standard Threats-to-Validity format), plus did a full
-novelty check (no scooping found; 3 new citations added honestly,
-including one benchmark that beats our numbers on different hardware — a
-strength, not something buried). `paper/outreach_message_dr_sadiq.md` is
-ready. **Next action: B4 — Aoun sends the outreach message whenever ready,
-then relays Dr. Sadiq's response back.** A9/A10 (arXiv + GitHub publication
+**Current status (2026-11-22): A1-A8 done, plus a second strengthening
+pass after external review.** Public GitHub repo live at
+github.com/m-aoun/voice-agent-research.
+
+Aoun shared a Gemini review of the draft. Treated it as untrusted input to
+verify, not as ground truth — checked every factual claim before acting:
+- **Confirmed and fixed:** citation [1]'s model name (Qwen2.5-Omni) was
+  accurate for v1 of that arXiv paper specifically but the paper now notes
+  the version explicitly, since v2 reports different figures (Qwen3-Omni,
+  146s local).
+- **Confirmed real and serious, then fixed properly:** Gemini's regex
+  false-positive concern (does `GLUED_SEGMENT` misfire on abbreviations
+  like "Dr.Smith"?) was genuinely valid — tested it directly
+  (`research/regex_robustness.mjs`, 10 deterministic cases, no LLM). Found
+  two real false-positive categories, the more serious being **any
+  multi-letter all-capital dotted abbreviation ("U.S.", "U.K.", etc.) —
+  the trigger is inside the abbreviation itself, not a spacing issue.**
+  Turned this into a proper paper addition: new Methodology subsection
+  (4.1), new Results subsection (5.1), a 4th contribution in the
+  Introduction, and a concrete low-risk fix recommendation in Future Work.
+  This is a genuinely stronger paper for having found it.
+- **Had to correct my own earlier mistake:** my citation [10]
+  (`voice-latency-lab`) had wrong secondhand numbers (I'd said
+  ~250-270ms/~4x faster; verified-via-direct-fetch real numbers are 70ms
+  first-token / 13.6-15.9x faster, using a *larger* model than ours). Fixed
+  throughout Related Work, Discussion, and Threats to Validity — the
+  corrected, larger gap is actually a more interesting finding (points at
+  memory architecture, not model size, as the dominant factor).
+- Re-verified the repo itself exists (it does — public, MIT, 9 commits,
+  0 stars, real README) before leaving any citation to it in the paper.
+
+**Next action: B4 — Aoun sends the outreach message whenever ready, then
+relays Dr. Sadiq's response back.** A9/A10 (arXiv + GitHub publication
 prep, IEEE SERA submission research) can happen in parallel, not blocked
 on his response. Check `status.html` for the live-updated task-by-task
 picture.

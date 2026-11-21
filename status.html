@@ -81,7 +81,7 @@
 <script>
 // Edit this object each time something changes, then commit. Status values:
 // "done" | "progress" | "blocked" | "todo"
-const LAST_UPDATED = "2026-11-22 02:15 PKT";
+const LAST_UPDATED = "2026-11-22 03:30 PKT";
 
 const tasks = {
   A: [
@@ -125,6 +125,7 @@ const log = [
   { ts: "2026-11-22 00:30", text: "A7 done — first full paper draft. paper/paper.md: abstract through references, 7 citations, both result tables, honest negative-result framing for RQ2, full limitations section (including the untested gpt-oss model as the biggest open question). Author list has Dr. Sadiq bracketed as pending. B2 (Aoun's read-through) is now the active blocker before anything moves toward Dr. Sadiq or A8 (outreach message)." },
   { ts: "2026-11-22 01:00", text: "Aoun delegated B2 back to Claude ('you read it, just make sure it gets accepted'). Did a real critical self-review + full web novelty check. Found: no scooping (2 adjacent papers properly distinguished, cited honestly); found and fixed 3 real weaknesses (RQ1 n=10 too small for p90 → reran at n=30; a results-table honesty gap; Limitations restructured into proper Threats-to-Validity SE convention). Also found and honestly cited a close non-peer-reviewed benchmark (voice-latency-lab) that beats our latency numbers on Apple Silicon — turned into a useful hardware-dependency discussion point rather than buried." },
   { ts: "2026-11-22 02:15", text: "A8 done. paper/outreach_message_dr_sadiq.md — warm, low-pressure WeChat message referencing his 'Trustworthy AI' focus specifically, clear that it's a co-authorship ask not a supervision ask (Aoun isn't currently enrolled), links straight to the repo. B4 (Aoun sending it) is now the active next step. A9/A10 can proceed in parallel, not blocked on his response." },
+  { ts: "2026-11-22 03:30", text: "Second strengthening pass, prompted by a Gemini review Aoun shared. Verified every factual claim rather than trusting it: confirmed citation [1]'s version-specific model name needed a note (Qwen2.5-Omni is v1-specific); confirmed and deeply investigated the regex false-positive concern — built research/regex_robustness.mjs (10 deterministic tests, no LLM), found a real, previously-undocumented false-positive risk (all-capital dotted abbreviations like 'U.S.' trigger the cut regardless of spacing), added it as a proper 4th contribution with a concrete low-risk fix recommendation. Also caught and fixed my OWN earlier mistake: citation [10]'s numbers were wrong secondhand figures — re-verified the repo directly, real numbers show a 13.6-15.9x gap (not ~4x), using a LARGER model than ours, which points at memory architecture as the real factor. Paper is stronger for all of this." },
 ];
 
 const badgeLabel = { done: "DONE", progress: "IN PROGRESS", blocked: "BLOCKED", todo: "NOT STARTED" };

@@ -42,9 +42,15 @@ true negatives rather than missed detections, suggests the failure mode may
 be specific to the production system's original model (a reasoning model
 served via a different provider) rather than a universal property of LLMs
 in this role. We report this honestly as a boundary condition on the
-heuristic's necessity, not a positive validation of its accuracy, and
-discuss what that implies for treating LLM voice agents as *trustworthy AI
-systems* in practice.
+heuristic's necessity, not a positive validation of its accuracy. We
+additionally run a small, deterministic robustness check directly against
+the heuristic's matching rule (no LLM involved) and find a concrete,
+previously-undocumented false-positive risk: certain realistic front-desk
+phrases — specifically, multi-letter all-capital abbreviations like
+"U.S." — can trigger a false cut regardless of spacing, independent of
+whether any self-dialogue is present. We discuss both findings'
+implications for treating LLM voice agents as *trustworthy AI systems* in
+practice, including a concrete low-risk fix for the false-positive issue.
 
 ---
 
@@ -100,7 +106,11 @@ Our contributions:
    result, with manual verification that it is a true negative rather than
    a missed detection, and a discussion of what that implies about the
    failure mode's generality.
-3. A fully open, zero-cost, reproducible experimental artifact — code,
+3. A deterministic robustness check of that same defense's matching rule,
+   independent of any LLM, which surfaces a concrete, previously
+   undocumented false-positive risk (certain all-capital dotted
+   abbreviations) and a correspondingly concrete, low-risk fix.
+4. A fully open, zero-cost, reproducible experimental artifact — code,
    scripts, and raw result data — released alongside this paper.
 
 ## 2. Related Work
@@ -108,12 +118,18 @@ Our contributions:
 **Cascaded voice agent latency.** Salesforce AI Research [1] presents a
 technical tutorial for building self-hosted, enterprise-grade real-time
 voice agents, arguing that native speech-to-speech models remain too slow
-for real-time use (their measurement: ~13s time-to-first-audio for
-Qwen2.5-Omni) and that the cascaded STT → LLM → TTS pipeline, with
-overlapping execution between stages, is the practical architecture for
-production. They report a time-to-first-audio (TTFA) of 755ms (best-case
-729ms) using Deepgram streaming STT, a self-hosted or API-served LLM, and
-ElevenLabs streaming TTS, with a reported STT component latency of ~337ms.
+for real-time use — v1 of the paper reports ~13s time-to-first-audio for
+Qwen2.5-Omni; a later revision reports a local Transformers deployment of
+Qwen3-Omni at ~146s, with only a cloud-API route (~702ms) being fast
+enough to be usable, which does not change the paper's conclusion but is
+worth flagging since we are citing a specific figure from v1 here — and
+that the cascaded STT → LLM → TTS pipeline, with overlapping execution
+between stages, is the practical architecture for production. Both
+versions agree on their own built system's core figures, which is what we
+actually compare against for RQ1: a time-to-first-audio (TTFA) of 755ms
+(best-case 729ms) using Deepgram streaming STT, a self-hosted or
+API-served LLM, and ElevenLabs streaming TTS, with a reported STT
+component latency of ~337ms.
 A second measured pipeline, targeting telecommunications use cases [2],
 reports a per-component breakdown of ASR at 0.05s, TTS at 0.28s, and LLM
 generation averaging 0.67s — notably showing the LLM, not STT or TTS, as
@@ -176,16 +192,18 @@ occur, which is the gap this paper addresses.
 
 **Local voice-agent latency benchmarking.** We are aware of one prior,
 non-peer-reviewed benchmark using a very similar free/local stack: the
-`voice-latency-lab` project [10] measures Ollama + faster-whisper + Piper
-on macOS, reporting a notably faster local time-to-first-token
-(~250-270ms) and total time-to-first-audio (~800ms at p50) than our
-figures. We read this gap as most likely a hardware effect — that
-benchmark runs on Apple Silicon with unified memory and Metal acceleration,
-whereas ours runs on a Windows laptop with a 4GB discrete GPU not large
-enough to hold either tested model fully in VRAM — and discuss it further
-in Section 6. To our knowledge, no peer-reviewed study places a free/local
-cascaded stack in direct, decomposed comparison against the specific
-published cloud benchmarks [1], [2] we compare against here.
+`voice-latency-lab` project [10] (public, MIT-licensed, 9 commits, 0 stars
+— a small personal benchmark, not peer-reviewed) measures the same
+faster-whisper and Piper versions we use (1.2.1 and 1.8.0 respectively)
+plus Ollama running `qwen3.5:9b`, on an Apple M5 Pro (24GB unified memory).
+Its reported figures for a Piper sentence-streaming turn (p50, averaged
+over 36 turns): STT 254ms, first LLM token 70ms *after the transcript is
+available*, first audio 542ms after the transcript. The first-token figure
+in particular is dramatically faster than ours — we discuss the likely
+hardware explanation, and what we think is the more interesting reading of
+it, in Section 6. To our knowledge, no peer-reviewed study places a
+free/local cascaded stack in direct, decomposed comparison against the
+specific published cloud benchmarks [1], [2] we compare against here.
 
 ## 3. System Description
 
@@ -258,6 +276,26 @@ truth). This produced 52 real conversational turns across the heuristic-
 active condition. All raw transcripts are released alongside this paper
 (`research/runs/*.json`).
 
+**Heuristic robustness check (false positives).** The LLM-driven
+evaluation above tests recall-style behavior — does the heuristic fire
+when it should. It says nothing about precision — whether it also fires
+when it should *not*. Because `firstSegmentEnd()` is a pure, deterministic
+function of its input text, we additionally ran it directly (no LLM
+involved) against a small, hand-constructed set of sentences containing
+common abbreviations, to check whether ordinary front-desk language could
+trigger a false positive. We found two confirmed categories where it can:
+(a) an abbreviation period immediately followed by a capital letter with
+no intervening space (e.g., "Dr.Smith"), and, more importantly, (b)
+**multi-letter, all-capital dotted abbreviations, where the false trigger
+comes from *within* the abbreviation itself regardless of what follows**
+— "U.S." contains a period between "U" and "S," which the heuristic cannot
+distinguish from a genuine sentence boundary, so "located in the U.S. Give
+us a call." is cut after "U." even though the sentence is entirely
+well-formed and properly spaced. Ordinary single-letter-prefix
+abbreviations with a space after them (Dr., Mr., St., a.m., e.g., Inc.)
+did **not** trigger a false positive in our tests. We report the exact
+test cases and this methodology note in `research/regex_robustness.mjs`.
+
 ### 4.2 RQ1 — Latency
 
 We measure four quantities per conversational turn: (1) STT latency,
@@ -298,6 +336,23 @@ failed to catch. One reply did fabricate a plausible-but-unverified detail
 (inventing which physician had seen a patient previously), which is a
 *different* hallucination type (factual fabrication) than the self-dialogue
 pattern this heuristic targets, and is out of scope for this paper.
+
+**Heuristic robustness check (10 deterministic test cases, Section 4.1).**
+8 of 10 cases behaved as a correct heuristic should (no false cut on
+ordinary language; a correct cut on a genuine glued turn). The remaining 2
+are confirmed false positives: an abbreviation with no following space
+("Dr.Smith"), and — more importantly, because it requires no formatting
+error at all — **any multi-letter, all-capital dotted abbreviation**
+("U.S.", and by the same logic "U.K.", "U.N.", "U.S.A."), where the
+regex's trigger condition is satisfied *inside* the abbreviation itself.
+We note that none of our 7 RQ2 scenarios happened to contain this specific
+pattern, which means **our 0/52 result should not be read as evidence this
+false-positive mode doesn't occur in practice — only that our scenarios
+did not happen to probe for it.** This is exactly the kind of narrow,
+specific, checkable finding we think matters more than a vague
+"the heuristic seems fine": a clinic receptionist discussing insurance
+coverage is a plausible, realistic context for "U.S." to come up, and
+every occurrence would currently be a false cut.
 
 ### 5.2 RQ1
 
@@ -352,17 +407,27 @@ how fast tokens keep arriving once started, which is precisely what
 specialized inference hardware is built for.
 
 This is corroborated, and usefully complicated, by comparison against the
-`voice-latency-lab` benchmark [10] (Section 2), which measures a similar
-free/local stack (Ollama, faster-whisper, Piper) but reports a local
-time-to-first-token of only ~250-270ms — close to the cloud figures, and
-roughly 4x faster than our median. That benchmark runs on Apple Silicon
-with unified memory and Metal GPU acceleration; ours runs on a Windows
+`voice-latency-lab` benchmark [10] (Section 2), which measures an
+almost-identical free/local stack — the same faster-whisper (1.2.1) and
+Piper (1.8.0) versions we use — but reports a local LLM first-token
+latency of only ~70ms after the transcript is available, using a *larger*
+model (`qwen3.5:9b`, 9B parameters) than either of ours. That is
+**13.6-15.9x faster than our median first-token figures (953-1115ms)**,
+despite their model being larger, not smaller. The most likely explanation
+is not the model but the hardware: that benchmark runs on an Apple M5 Pro
+with 24GB of unified memory, so the entire model and its KV cache stay in
+fast, GPU-accessible memory throughout generation; ours runs on a Windows
 laptop with a 4GB discrete GPU too small to hold either tested model
-entirely in VRAM, forcing partial CPU offload. Taken together, the two
-results suggest that "free/local" is not one latency profile but a range
-that depends heavily on the specific hardware's memory architecture — a
-caveat we did not anticipate before running this comparison, and one we
-think is independently worth reporting (Section 7).
+fully in VRAM, forcing partial CPU offload for a large share of the
+computation. Taken together, the two results suggest something stronger
+than "free/local is somewhat slower than cloud": **the dominant factor in
+free/local LLM latency may be memory architecture (unified vs. discrete,
+and whether the model fits) rather than raw compute power or model size.**
+We did not anticipate this before running the comparison, and we think it
+is independently worth reporting (Section 7) — a reader deciding whether a
+free/local voice-agent stack is viable for their use case should weigh
+their target hardware's memory architecture well before its raw
+GPU/TFLOPS specification.
 
 **Reliability.** We report RQ2 plainly as a negative result: the specific
 failure mode the production heuristic was built to catch did not occur, at
@@ -440,12 +505,15 @@ the result?)
 - **Single machine, single hardware configuration.** Latency figures are
   specific to the test machine described in Section 4; we do not report
   variance across hardware. This is not a minor caveat: an independent
-  benchmark of a similar stack on different hardware [10] reports
-  time-to-first-token roughly 4x faster than ours (Section 6), which we
-  attribute to unified-memory/Metal acceleration vs. a small discrete GPU
-  with partial CPU offload. Our absolute numbers should be read as
-  characterizing *this specific hardware class*, not "the free/local
-  stack" in general.
+  benchmark of an almost-identical software stack on different hardware
+  [10] reports time-to-first-token 13.6-15.9x faster than ours (Section 6)
+  despite using a *larger* model, which we attribute to unified memory
+  fitting the whole model and KV cache in fast GPU-accessible memory vs.
+  our 4GB discrete GPU forcing partial CPU offload. Our absolute numbers
+  should be read as characterizing *this specific hardware class*, not
+  "the free/local stack" in general — and the gap being this large,
+  driven by memory architecture rather than compute or model size, is
+  itself one of this paper's more surprising findings.
 
 ## 8. Future Work
 
@@ -460,6 +528,15 @@ the result?)
   figures.
 - Evaluation against real (not scripted) call transcripts, subject to the
   usual privacy and consent constraints of real customer data.
+- **A concrete, actionable fix for the false-positive risk found in
+  Section 5.1**: special-case common all-capital dotted abbreviations
+  (a short static list — "U.S.", "U.K.", "U.N.", "U.S.A." and similar —
+  is enough to cover the realistic cases) before applying the
+  `GLUED_SEGMENT` check, or require a minimum segment length before
+  cutting. Either is a small, low-risk change to the production heuristic
+  that we did not implement here (this paper evaluates the heuristic as
+  deployed, not a modified version of it), but which we think should
+  follow directly from this paper's own findings.
 
 ## 9. Conclusion
 
@@ -507,9 +584,13 @@ Luque, M. Cernak, and P. Motlicek, "DialFork: Going Beyond Factuality to
 Evaluate Procedural Hallucination in Conversational Agents,"
 arXiv:2610.21561, 2026.
 
-[10] O. Ozfe, "voice-latency-lab: Where the time goes in a local
-voice-agent turn (STT → LLM → TTS)," github.com/oguzhanozfe/voice-latency-lab,
-2026. (Not peer-reviewed; cited as the closest comparable benchmark found.)
+[10] O. Özdemir (oguzhanozfe), "voice-latency-lab: Where the time goes in
+a local voice-agent turn (STT → LLM → TTS), and which streaming tricks
+help," github.com/oguzhanozfe/voice-latency-lab, accessed 2026-11-22.
+(Public, MIT-licensed personal repository, 9 commits, 0 stars; not
+peer-reviewed. Cited as the closest comparable benchmark found, with
+hardware and model conditions specified in Sections 2 and 6 precisely
+because the source is informal.)
 
 ---
 
@@ -519,4 +600,7 @@ Every number in this paper is generated from code and raw data published
 at github.com/m-aoun/voice-agent-research. `research/analyze_results.mjs`
 regenerates every table in Section 5 directly from the raw JSON logs in
 `research/runs/`; nothing in this paper was hand-transcribed from a
-separate analysis.
+separate analysis. `research/regex_robustness.mjs` reproduces the
+deterministic false-positive check (Sections 4.1 and 5.1) independently of
+any LLM or random seed — running it will print the same 10/10 result every
+time.
