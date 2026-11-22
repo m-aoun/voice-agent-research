@@ -54,53 +54,13 @@ detect/stop it, compared to no detection at all?
   work" paragraph, not in scope.
 
 ### Target venue
-- **IEEE SERA** (Software Engineering Research, Management and Applications)
-  — real precedent found: an undergrad-led ASR paper was accepted there in
-  2026 (University of Southern Maine). IEEE Xplore indexed, realistic bar for
-  a student co-authored paper.
-  **A10 research (2026-11-22):** SERA 2026 (the 24th edition, Towson, MD)
-  already happened (May 27-29, 2026) — its submission window is closed, so
-  the real target is **SERA 2027, the 25th edition, University of Nevada
-  Las Vegas (UNLV), May 26-28, 2027, hybrid (in person & online)**.
-  Sourced from the official CFP (easychair.org/cfp/SERA-2027) and the ACIS
-  conference page (acisinternational.org/conferences/sera-2027/):
-  - **Deadlines found — note a real conflict needing confirmation before
-    relying on either:** EasyChair's page header says "Submission deadline:
-    March 31, 2027" but its own "IMPORTANT DATES" list AND the ACIS page
-    both independently say **full paper submission: February 26, 2027**.
-    Treat Feb 26, 2027 as the working deadline (two independent sources
-    agree), but double-check on the live CFP closer to the date. Other
-    dates: special session/workshop proposals Jan 12, 2027; abstract
-    registration (EasyChair only) March 1, 2027; acceptance notification
-    April 5, 2027; camera-ready + registration April 19, 2027.
-  - **Format:** IEEE conference template (no LaTeX/Word link given on
-    either page checked), margins/font size must not be changed. **Full
-    papers: up to 8 pages including references. Short papers: up to 4
-    pages including references.** Title must be prefixed "SERA2027:" on
-    submission (SERA shares a submission system with 3 co-located
-    conferences — AIML2027/BCD2027/ICIS2027 — so the prefix picks which
-    one).
-  - **Portal:** EasyChair (easychair.org/conferences/?conf=sera2027).
-  - **Blind review: NOT STATED on either page checked.** Don't assume
-    double-blind; don't anonymize the PDF by default. Re-check the CFP PDF
-    (CFP_SERA2027.pdf, linked from the ACIS page, not yet fetched) or the
-    separate "Paper Submission Instructions" page before actually
-    submitting, in case it specifies this.
-  - **Publication:** "proceedings will be published by IEEE Conference
-    Publishing Services and submitted for indexing in EI, INSPEC, and
-    DBLP" (EasyChair's own wording). IEEE Xplore itself isn't explicitly
-    named on either page — reasonable to assume given IEEE Conference
-    Publishing Services, but not a direct quote, so don't state it to the
-    prospective co-author as 100% confirmed without one more check.
-  - **Attendance/fees:** not clearly stated whether an author must attend
-    in person for a non-best-paper submission (the "hybrid" format and an
-    "Online Presentation Coordinating Chair" role both suggest remote
-    presentation is possible, but this isn't explicit). A linked fee
-    schedule PDF and "Register Now" page were both still placeholders
-    ("tba") as of this check — revisit closer to the deadline.
-  - **Takeaway for timeline:** paper needs to be submission-ready by
-    **~Feb 26, 2027** for this specific edition. That's a realistic amount
-    of runway from where the draft is now (2026-11-22).
+**Open/TBD as of 2026-11-23 (Aoun's decision), not pre-committed.**
+Earlier research looked specifically at IEEE SERA, but Aoun decided to
+let the prospective co-author read the paper and suggest a venue
+themselves — ideally one they've already published in before — rather
+than presenting a fixed choice before co-authorship is even confirmed.
+That earlier research isn't lost, just not the stated plan in this
+public file anymore; ask if it's needed again.
 - **arXiv preprint** — **hold off until the co-author question is
   resolved** (2026-11-22 revision of this plan). arXiv submissions are
   citable and effectively permanent/public once posted, including the
@@ -369,16 +329,20 @@ Everything is paid in the real world, but we don't need to spend anything:
         (the `GLUED_SEGMENT` heuristic), so documenting it beats silently
         changing reused production code.
       - Blind-review policy check deferred to A10's findings below — not
-        stated by SERA 2027's CFP, so no author-anonymization change made;
-        revisit before actual submission once confirmed.
+        stated by the one venue's CFP checked, so no author-anonymization
+        change made; revisit before actual submission once a venue and
+        its policy are confirmed.
       - `LICENSE` (MIT), `.gitignore`, `package.json` all already fine,
         no changes needed.
-- [x] **A10.** **Done 2026-11-22.** Researched SERA's real, current
-      submission requirements — see §1 "Target venue" above for full
-      details (dates, deadlines incl. a noted conflict, page limits,
-      template, portal, blind-review status, publication/indexing). Key
-      takeaway: **SERA 2026 already happened; the real target is SERA
-      2027 (UNLV, May 26-28 2027), full-paper deadline ~Feb 26, 2027.**
+- [x] **A10.** **Done 2026-11-22, revised 2026-11-23.** Originally
+      researched one specific venue's real, current submission
+      requirements (dates, deadlines, page limits, template, portal,
+      blind-review status, publication/indexing). **Revision (Aoun,
+      2026-11-23):** decided not to pre-commit to a specific venue in
+      this public repo — the prospective co-author should read the paper
+      and suggest a venue themselves, ideally one they've already
+      published in before. The original research isn't lost (kept
+      privately), just no longer stated as the plan here.
 - [x] **A11 — CANCELLED (Aoun, 2026-11-22).** Was: once Aoun hands over
       fresh free-tier Deepgram/Groq-OpenRouter/Cartesia keys, run a small
       batch (50-100 calls) through the real cloud stack and add that as a
@@ -526,8 +490,9 @@ Everything is paid in the real world, but we don't need to spend anything:
       needed since A11 itself was cancelled.
 - [ ] **B4.** Send the outreach message to the prospective co-author on
       WeChat once A8 is ready, and relay their response back.
-- [ ] **B5.** Handle the IEEE SERA submission portal / account / ORCID
-      linking personally when we actually submit.
+- [ ] **B5.** Handle the submission portal / account / ORCID linking
+      personally for whichever venue ends up chosen, when we actually
+      submit.
 - [ ] **B6.** (Separate track, not blocking this project) Keep handling the
       St. Cloud State I-20 / F1 visa process on his own timeline.
 
@@ -659,7 +624,7 @@ Active Claude work-hours per task (spread across sessions — not one sitting):
 | A7 — paper draft | ~3 hr | Writing, using the literature already gathered in §1 |
 | A8 — outreach message draft | ~20 min | Writing |
 | A9 — GitHub repo prep | ~40 min | Git, README, LICENSE, blind-review check |
-| A10 — IEEE SERA requirements research | ~40 min | Web research |
+| A10 — target-venue requirements research | ~40 min | Web research |
 | **Total (A1-A10, my active time)** | **~11 hours**, realistically 3-5 separate sessions | — |
 
 **Real bottleneck to know about:** this isn't all my time. **B1 (Aoun
@@ -719,9 +684,9 @@ verify, not as ground truth — checked every factual claim before acting:
 A9 and A10 are now also done (2026-11-22): the repo is publication-ready
 (git history scanned clean of secrets, README corrected and expanded,
 a real-but-irrelevant-to-the-heuristic bug in `brain.js` documented
-rather than silently changed), and the real target venue/deadline is
-confirmed — **SERA 2027 at UNLV, full-paper deadline ~Feb 26, 2027**
-(SERA 2026 already happened). Full details in §1 and in A9/A10 above.
+rather than silently changed), and venue requirements were researched
+for one reference example. **Revised 2026-11-23: target venue is now
+open/TBD, not pre-committed** — see §1 and A10 above for why.
 
 A11/B3 (the deferred cloud-API comparison sample) were **cancelled**
 the same day, by Aoun's decision on Claude's advice — RQ1's existing
