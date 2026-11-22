@@ -1,4 +1,4 @@
-# Real-Time Self-Dialogue Hallucination Detection in Cascaded LLM Voice Agents: A Latency and Reliability Case Study
+# Self-Dialogue Hallucination in Real-Time Cascaded LLM Voice Agents: An Empirical Latency and Reliability Case Study of a Deployed Runtime Heuristic
 
 **Authors:** Muhammad Aoun Shabbir¹, [second author — name withheld here
 until co-authorship is confirmed]²
@@ -312,6 +312,17 @@ calls, ~\$0.002 total). This produced 85 real conversational turns across
 the heuristic-active condition, 33 of them against the production model
 specifically. All raw transcripts are released alongside this paper
 (`research/runs/*.json`).
+
+**A note on uneven turn counts per model.** Per-model turn counts are not
+identical (e.g., 8-9 for `llama3:8b` vs. 16-18 for the others at a given
+temperature) because our harness ends a scripted conversation early
+whenever the model itself emits an explicit `[END:done]` completion
+marker — an intentional, real behavior of the production system, not an
+experimental artifact we introduced. Different models conclude some
+scenarios earlier than others, which is itself a minor, incidental
+finding about model behavior, not a methodological inconsistency; we
+report the exact count achieved per condition rather than normalizing it
+away.
 
 **Noisy-input condition.** All of the above feeds the LLM clean,
 well-punctuated, correctly-capitalized caller text. A reviewer correctly
@@ -642,6 +653,20 @@ paper's claims should be read through.
   rambling-caller scenario (Section 5.1) are genuine hallucinations by
   any general definition but are outside this construct, and we do not
   count them toward RQ2's result either way.
+- **The heuristic's detection mechanism itself only covers one specific
+  self-dialogue signature.** `GLUED_SEGMENT` fires only when a sentence-
+  ending punctuation mark is followed *immediately*, with no space or
+  newline, by a capital letter. A model that instead continued the
+  conversation with a space, a newline, or an explicit speaker label
+  before the invented turn (e.g. "Sure.\nCaller: Got it.") would not
+  trigger this heuristic at all — a false negative by construction, not
+  by bad luck. We found no such instance in any of the 144 raw
+  transcripts collected for this paper (Section 5.1's manual review
+  covered every turn, not just the ones the heuristic flagged), so this
+  is not evidence the gap caused us to miss something in our own data —
+  but it is a real, acknowledged limit on what this specific
+  implementation can ever catch, independent of how many trials are run
+  against it.
 
 **Internal validity** (could something other than what we claim explain
 the result?)
