@@ -42,11 +42,14 @@ it reaches the caller. Across 85 scripted conversational turns spanning
 **three** models — two general-purpose open-weight models run locally, and
 the actual production model run through its actual production provider —
 and two temperature settings, we find **zero** instances of the failure
-mode the heuristic was built to catch. Critically, this null result holds
+mode the heuristic was built to catch; an additional 59 turns against the
+two local models with caller input corrupted to approximate raw ASR-style
+text (no punctuation, no capitalization) find zero more, bringing the
+total to **0 of 144** scripted turns. Critically, this null result holds
 even for the exact model and serving path the heuristic was originally
 built to defend against, which rules out "wrong model" as the explanation
 and instead raises a different, more interesting possibility: the failure
-mode may simply be rare, occurring at a low enough rate that 85 trials is
+mode may simply be rare, occurring at a low enough rate that 144 trials is
 not yet enough to reliably observe it, rather than absent. Combined with
 manual verification that our zero observations are true negatives (not
 missed detections), we report this honestly as a boundary condition on the
@@ -55,10 +58,16 @@ additionally run a small, deterministic robustness check directly against
 the heuristic's matching rule (no LLM involved) and find a concrete,
 previously-undocumented false-positive risk: certain realistic front-desk
 phrases — specifically, multi-letter all-capital abbreviations like
-"U.S." — can trigger a false cut regardless of spacing, independent of
-whether any self-dialogue is present. We discuss both findings'
-implications for treating LLM voice agents as *trustworthy AI systems* in
-practice, including a concrete low-risk fix for the false-positive issue.
+"U.S." — could trigger a false cut regardless of spacing, independent of
+whether any self-dialogue is present. We implement and validate a
+targeted fix for this risk, and separately compare the deployed
+heuristic against the obvious naive alternative (cut every reply after
+its first sentence, unconditionally): re-applied to every raw transcript
+collected for this paper (144 turns, clean and noisy-input conditions
+combined), the naive rule would discard real content from 93.8% of
+turns, against 0% for the deployed heuristic. We discuss these
+findings' implications for treating LLM voice agents as *trustworthy AI
+systems* in practice.
 
 ---
 
@@ -115,17 +124,23 @@ Our contributions:
    across **three** models — two general-purpose open-weight LLMs and,
    critically, the actual production model run through its actual
    production provider — two temperature settings, and seven realistic
-   front-desk conversational scenarios (85 turns total), reported as a
-   negative result with manual verification that it is a true negative
-   rather than a missed detection, and a statistically-grounded discussion
-   of what a null result over ~85 trials does and does not rule out for a
-   potentially rare failure mode.
+   front-desk conversational scenarios (85 turns total, extended to 144
+   with an additional noisy-input condition on the two local models),
+   reported as a negative result with manual verification that it is a
+   true negative rather than a missed detection, and a
+   statistically-grounded discussion of what a null result over ~144
+   trials does and does not rule out for a potentially rare failure mode.
 3. A deterministic robustness check of that same defense's matching rule,
    independent of any LLM, which surfaces a concrete, previously
    undocumented false-positive risk (certain all-capital dotted
-   abbreviations) and a correspondingly concrete, low-risk fix.
-4. A fully open, zero-cost, reproducible experimental artifact — code,
-   scripts, and raw result data — released alongside this paper.
+   abbreviations), a targeted fix we implement and validate, and a
+   baseline comparison against the obvious naive alternative, showing the
+   deployed heuristic preserves legitimate content in 144/144 real
+   transcripts where a naive rule would have damaged 135/144 (93.8%).
+4. A fully open, reproducible experimental artifact — code, scripts, and
+   raw result data — released alongside this paper, predominantly
+   zero-cost to reproduce with one documented, negligible-cost exception
+   (Section 4.1).
 
 ## 2. Related Work
 
@@ -298,6 +313,23 @@ the heuristic-active condition, 33 of them against the production model
 specifically. All raw transcripts are released alongside this paper
 (`research/runs/*.json`).
 
+**Noisy-input condition.** All of the above feeds the LLM clean,
+well-punctuated, correctly-capitalized caller text. A reviewer correctly
+pointed out this is a real external-validity gap: on a real call, the
+caller's turn reaches the LLM only after passing through a real STT
+engine, and STT output does not reliably preserve punctuation or
+capitalization. To test whether messier input makes the target failure
+mode more likely, we additionally ran the identical seven scenarios
+against the two local models, both temperatures, both `singleSegment`
+modes, with every caller turn corrupted to approximate raw ASR-style
+output: lowercased, punctuation stripped, whitespace collapsed
+(`research/hallucination_harness_noisy.mjs`). We report this plainly as a
+simple, low-cost approximation of the *absence* of clean punctuation/
+capitalization cues, not a full acoustic/ASR error model (no substituted
+or dropped words, no homophone confusion) — a genuine ASR-noise study
+would need real STT output, which Section 4.2's local STT leg could in
+principle supply as future work.
+
 **Heuristic robustness check (false positives).** The LLM-driven
 evaluation above tests recall-style behavior — does the heuristic fire
 when it should. It says nothing about precision — whether it also fires
@@ -310,13 +342,53 @@ trigger a false positive. We found two confirmed categories where it can:
 no intervening space (e.g., "Dr.Smith"), and, more importantly, (b)
 **multi-letter, all-capital dotted abbreviations, where the false trigger
 comes from *within* the abbreviation itself regardless of what follows**
-— "U.S." contains a period between "U" and "S," which the heuristic cannot
+— "U.S." contains a period between "U" and "S," which the base rule cannot
 distinguish from a genuine sentence boundary, so "located in the U.S. Give
-us a call." is cut after "U." even though the sentence is entirely
+us a call." was cut after "U." even though the sentence is entirely
 well-formed and properly spaced. Ordinary single-letter-prefix
 abbreviations with a space after them (Dr., Mr., St., a.m., e.g., Inc.)
-did **not** trigger a false positive in our tests. We report the exact
-test cases and this methodology note in `research/regex_robustness.mjs`.
+did **not** trigger a false positive in our tests.
+
+**We implemented and validated a fix for category (b).** The fix
+recognizes a run of two or more consecutive single-capital-letter-plus-
+period tokens (e.g., "U.S.", "U.K.", "U.S.A.") and excludes every period
+*internal* to that run from being treated as a sentence boundary, while
+still allowing the run's own final period to mark a real boundary if one
+follows. This is a small, targeted change to `firstSegmentEnd()`
+(`src/brain.js`) — not a redesign of the heuristic — and it resolves
+category (b) without affecting the heuristic's existing behavior on
+anything else, confirmed by rerunning the full deterministic test suite
+(Section 5.1) and by directly re-checking the fixed function against
+every raw transcript already collected for this paper (Section 5.1). We
+deliberately did **not** attempt to fix category (a): a missing space
+after an ordinary abbreviation like "Dr.Smith" is not distinguishable
+from a genuine glued turn using punctuation alone, so no punctuation-only
+fix exists for it — it remains a known, documented limitation.
+
+**Baseline comparison.** A natural question is what a simpler
+alternative to this heuristic would do. A literal stop-sequence on a
+role-labeled string such as `"\nCaller:"` — a common pattern-match for
+self-dialogue in *raw completion-style* prompting — turned out not to be
+a meaningful baseline for this system specifically: this `Brain` class
+uses the structured OpenAI-compatible chat-completions API with
+role-separated messages (Section 3), and we did not observe any raw
+transcript, across every condition run for this paper, where the model
+emitted an explicit role label before continuing — the observed failure
+signature is always unlabeled prose glued directly onto the reply (the
+self-dialogue illustration in Section 3.1 is representative: *"...reach
+you? Got it. What is the reason...?"*, with no "Caller:"-style marker
+anywhere). A stop-sequence tuned to a pattern that never appears in this
+system's actual output would trivially show "zero false positives,
+zero true positives" and tell a reader nothing. Instead, we compare
+against the obvious *naive* alternative to the deployed heuristic's
+capital-letter-lookahead design: unconditionally cut every reply after
+its first complete sentence, regardless of whether a glued second turn
+is actually present. We apply this naive rule directly to every raw,
+uncut transcript already collected for this paper (`research/
+naive_baseline_comparison.mjs`) and report, per turn, whether it has 2 or
+more sentences — meaning a naive rule would discard real, legitimate
+content from it — compared against the deployed heuristic re-applied to
+the same raw text.
 
 ### 4.2 RQ1 — Latency
 
@@ -368,35 +440,78 @@ that RQ2's heuristic is not designed to catch and that we do not count
 toward the self-dialogue result above: factual fabrication of an
 unverifiable record detail. The rambling-caller scenario's follow-up turn
 asks the agent to recall which physician saw the caller's daughter on a
-prior visit — information the agent has no way to actually know. Across
-every applicable turn where this follow-up fired (excluding turns where
-the scripted conversation ended before reaching it), **the two local
-models fabricated a specific, plausible-sounding physician name as
-settled fact in 3 of 4 instances** ("Dr. Patel did see your daughter in
-March," "Dr. Smith saw your daughter in March" — two different invented
-names across two different runs), while **the production model
-(`gpt-oss-20b`) correctly declined in all 4 of its applicable
-instances** ("I'm not sure which doctor saw her... I'll check our
-records and let you know," "I don't have that specific information"),
-consistent with the broader pattern that it is the more conservative of
-the three models tested.
+prior visit — information the agent has no way to actually know. We
+checked every applicable turn where this follow-up actually fired
+(excluding turns where the scripted conversation ended before reaching
+it) across both the clean and noisy-input conditions (Section 4.1): of
+10 such applicable instances from the two local models, **8 fabricated a
+specific, plausible-sounding physician name as settled fact** ("Dr.
+Patel did see your daughter in March," "Dr. Smith saw your daughter on
+March 29th" — invented names repeated and varied across different runs),
+and the remaining 2 gave an evasive non-answer that neither confirmed nor
+declined. **None of the 10 local-model instances gave a clean, honest
+"I don't know."** The production model (`gpt-oss-20b`), by contrast,
+correctly declined in all 4 of its applicable instances ("I'm not sure
+which doctor saw her... I'll check our records and let you know," "I
+don't have that specific information") — though note the production
+model was only tested in the clean-input condition (Section 4.1), not
+the noisy one, so we cannot claim it would still behave this well under
+noisier input specifically. This pattern — confident fabrication over
+honest uncertainty — is, if anything, more consistent and more
+concerning than our first pass through this data suggested, and holds up
+across both input conditions tested.
 
-**Heuristic robustness check (10 deterministic test cases, Section 4.1).**
-8 of 10 cases behaved as a correct heuristic should (no false cut on
-ordinary language; a correct cut on a genuine glued turn). The remaining 2
-are confirmed false positives: an abbreviation with no following space
-("Dr.Smith"), and — more importantly, because it requires no formatting
+**Heuristic robustness check (12 deterministic test cases, Section 4.1).**
+Before the fix described in Section 4.1, this check found 2 confirmed
+false positives out of 10 cases: an abbreviation with no following space
+("Dr.Smith"), and — more seriously, because it requires no formatting
 error at all — **any multi-letter, all-capital dotted abbreviation**
-("U.S.", and by the same logic "U.K.", "U.N.", "U.S.A."), where the
-regex's trigger condition is satisfied *inside* the abbreviation itself.
+("U.S.", and by the same logic "U.K.", "U.N.", "U.S.A."), where the base
+rule's trigger condition is satisfied *inside* the abbreviation itself.
 We note that none of our 7 RQ2 scenarios happened to contain this specific
-pattern, which means **our 0/85 result should not be read as evidence this
-false-positive mode doesn't occur in practice — only that our scenarios
-did not happen to probe for it.** This is exactly the kind of narrow,
-specific, checkable finding we think matters more than a vague
-"the heuristic seems fine": a clinic receptionist discussing insurance
-coverage is a plausible, realistic context for "U.S." to come up, and
-every occurrence would currently be a false cut.
+pattern, which means the original **0/85 result should not have been
+read as evidence this false-positive mode doesn't occur in practice —
+only that our scenarios did not happen to probe for it.** A clinic
+receptionist discussing insurance coverage is a plausible, realistic
+context for "U.S." to come up, and every occurrence would have been a
+false cut. **After implementing the fix (Section 4.1), 12/12 cases now
+match their documented expectation, and 11/11 of the cases where correct
+behavior is achievable now behave correctly** — the one remaining,
+deliberately unfixed case ("Dr.Smith") is a known, documented limitation,
+not a regression.
+
+**Noisy-input condition (Section 4.1).** Running the identical seven
+scenarios against both local models, both temperatures, both
+`singleSegment` modes, with every caller turn stripped of punctuation
+and lowercased, produced 59 additional real turns — **0 of which
+triggered the self-dialogue cut**, matching the clean-input result
+exactly. We manually inspected every noisy-input raw reply (the same
+discipline applied to the clean condition above) and again found
+genuine single-turn, well-formed responses, not a missed self-dialogue
+instance the heuristic failed to catch. **Combined across both
+conditions, this brings RQ2's total to 0 of 144 scripted turns**
+triggering the heuristic. Notably, the doctor-name fabrication pattern
+discussed above reproduced under noisy input too (5 of the 8 fabrication
+instances above came from the noisy condition), which is itself
+evidence that the corruption did not simply make the models "go quiet"
+or degrade into generic non-answers — they remained willing to assert
+specific, confident, false claims, just never in the specific
+glued-turn form this heuristic targets.
+
+**Baseline comparison (Section 4.1).** Applying the naive "always cut
+after the first sentence" rule directly to all 144 raw, uncut
+transcripts collected for this paper — clean and noisy-input conditions
+combined (`research/naive_baseline_comparison.mjs`) — **a naive rule
+would have discarded real, legitimate content from 135 of 144 turns
+(93.8%)**: nearly every reply this receptionist actually gives has more
+than one sentence, regardless of how clean or noisy the caller's input
+was. The deployed `GLUED_SEGMENT` heuristic, re-checked directly against
+the same 144 raw transcripts (post-fix), discards content from **0 of
+144 (0.0%)**. This is the clearest evidence in this paper that the
+heuristic's design — specifically, requiring a capital letter with *no*
+intervening space, rather than just cutting at the first sentence
+boundary — is doing real work, not just adding complexity for its own
+sake.
 
 ### 5.2 RQ1
 
@@ -477,25 +592,30 @@ GPU/TFLOPS specification.
 failure mode the production heuristic was built to catch did not occur, at
 all, across 85 real turns spanning three models (including the actual
 production model, run through its actual production provider), two
-temperatures, and scenarios designed to provoke it. This is a materially
-stronger negative result than an earlier draft of this work could report,
-which only tested two unrelated models and had to leave "maybe it's the
-production model specifically" open as the leading explanation. Testing
-the real model directly rules that specific explanation out, and leaves a
-different, more statistically grounded one in its place: **if the true
-rate at which this failure mode occurs in practice is low — say, in the
-low single-digit percent, consistent with it being observed often enough
-in real transcripts to justify building a defense, but not so often that
-every call exhibits it — then 85 trials is not actually enough to expect
-to reliably observe even one occurrence.** (At a true rate of 1%, the chance of seeing zero events in 85 independent
-trials is 0.99^85 ≈ 42.6%; at 2%, 0.98^85 ≈ 18.0%; even at 5%, it is still
-0.95^85 ≈ 1.3% — not negligible for a single run like ours.) We think this is the honest
-reading: not "the heuristic is unnecessary," but "a problem can be real,
-worth defending against, and still be rare enough that a few dozen
-scripted trials won't reliably reproduce it" — which has a direct,
-practical implication for anyone evaluating a similar production
-heuristic: a negative result over on the order of 100 trials should not,
-by itself, be read as evidence a rare failure mode doesn't exist. Read as
+temperatures, and scenarios designed to provoke it — nor across an
+additional 59 turns in a noisy-input condition approximating raw
+ASR-style text, bringing the total to **0 of 144 scripted turns**. This is
+a materially stronger negative result than an earlier draft of this work
+could report, which only tested two unrelated models and had to leave
+"maybe it's the production model specifically" open as the leading
+explanation. Testing the real model directly rules that specific
+explanation out, and leaves a different, more statistically grounded one
+in its place: **if the true rate at which this failure mode occurs in
+practice is low — say, in the low single-digit percent, consistent with
+it being observed often enough in real transcripts to justify building a
+defense, but not so often that every call exhibits it — then even 144
+trials is not actually enough to expect to reliably observe even one
+occurrence.** (At a true rate of 1%, the chance of seeing zero events in
+144 independent trials is 0.99^144 ≈ 23.5%; at 2%, 0.98^144 ≈ 5.5%; at
+5%, 0.95^144 ≈ 0.06% — meaningfully tighter than our earlier 85-trial
+estimate, but 1-2% true rates remain entirely plausible and still
+wouldn't reliably show up here.) We think this is the honest reading: not
+"the heuristic is unnecessary," but "a problem can be real, worth
+defending against, and still be rare enough that a few hundred scripted
+trials won't reliably reproduce it" — which has a direct, practical
+implication for anyone evaluating a similar production heuristic: a
+negative result over on the order of 100-150 trials should not, by
+itself, be read as evidence a rare failure mode doesn't exist. Read as
 a *trustworthy AI* contribution specifically: a production system's own
 defense mechanism is itself a legitimate object of study, and negative
 replication results — reported with the statistical honesty to say what
@@ -531,9 +651,10 @@ the result?)
   null result. We have since tested the actual production model through
   its actual production provider directly (Section 4.1), which rules that
   specific explanation out. The internal-validity question that remains is
-  the one discussed in Section 6: 85 trials, even against the right model
-  and provider, is not a large enough sample to confidently rule out a
-  failure mode with a true occurrence rate in the low single digits —
+  the one discussed in Section 6: even 144 trials, against the right
+  model and provider plus a noisy-input condition, is not a large enough
+  sample to confidently rule out a failure mode with a true occurrence
+  rate in the low single digits —
   which is entirely consistent with a problem being real and worth
   defending against in production, while still not showing up reliably in
   a run of this size. We do not have a way to fully resolve this within
@@ -546,10 +667,12 @@ the result?)
   claim themselves.
 
 **External validity** (how far do these results generalize?)
-- **Sample size.** 85 turns for RQ2 (across three models) and n=30 turns
-  per model for RQ1 are enough to support the specific, narrow claims made
-  here but are small relative to the kind of large-scale benchmark a
-  dedicated reliability
+- **Sample size.** 85 turns for RQ2's primary clean-input condition
+  (across three models), extended to 144 with an additional noisy-input
+  condition on the two local models, and n=30 turns per model for RQ1
+  are enough to support the specific, narrow claims made here but are
+  small relative to the kind of large-scale benchmark a dedicated
+  reliability
   study (e.g., [6], [7]) would use, and do not claim to generalize beyond
   the three models tested for RQ2 (two of which were also tested for RQ1).
 - **Synthetic, scripted conversations.** All caller inputs are
@@ -589,15 +712,12 @@ the result?)
   figures.
 - Evaluation against real (not scripted) call transcripts, subject to the
   usual privacy and consent constraints of real customer data.
-- **A concrete, actionable fix for the false-positive risk found in
-  Section 5.1**: special-case common all-capital dotted abbreviations
-  (a short static list — "U.S.", "U.K.", "U.N.", "U.S.A." and similar —
-  is enough to cover the realistic cases) before applying the
-  `GLUED_SEGMENT` check, or require a minimum segment length before
-  cutting. Either is a small, low-risk change to the production heuristic
-  that we did not implement here (this paper evaluates the heuristic as
-  deployed, not a modified version of it), but which we think should
-  follow directly from this paper's own findings.
+- A genuine ASR-noise study using real STT output (Section 4.1's
+  noisy-input condition is a low-cost approximation — punctuation/
+  capitalization stripped from otherwise-clean text — not a full
+  acoustic/ASR error model with substituted or dropped words).
+- Deploying the category-(b) regex fix (Section 4.1/5.1) to the real
+  production system, beyond this paper's own validation of it.
 
 ## 9. Conclusion
 
@@ -611,13 +731,16 @@ results locate the actual cost of running such a pipeline locally in
 sustained LLM token throughput rather than in getting started, and are
 directly comparable to two recent published cloud benchmarks. Our
 reliability results are a clean negative finding across three models,
-including the production model itself, reported honestly as a boundary
+including the production model itself, extended with a noisy-input
+condition to 144 total scripted turns, reported honestly as a boundary
 condition with an explicit statistical accounting of what a null result
-over 85 trials does and does not rule out for a potentially rare failure
+of this size does and does not rule out for a potentially rare failure
 mode — rather than dressed up as either a positive validation or a
 disproof. A deterministic robustness check of the same defense mechanism
 additionally surfaced a concrete, previously undocumented false-positive
-risk, with a correspondingly concrete fix. We argue that this kind of
+risk, which we fixed and validated, and a baseline comparison showing
+the deployed heuristic preserves legitimate content where a naive
+alternative would not. We argue that this kind of
 result — when did you solve a real problem, when does it not reproduce,
 and what does it break in the process of solving the first problem —
 belongs in the literature on trustworthy AI voice systems alongside
@@ -668,9 +791,14 @@ because the source is informal.)
 
 Every number in this paper is generated from code and raw data published
 at github.com/m-aoun/voice-agent-research. `research/analyze_results.mjs`
-regenerates every table in Section 5 directly from the raw JSON logs in
-`research/runs/`; nothing in this paper was hand-transcribed from a
-separate analysis. `research/regex_robustness.mjs` reproduces the
-deterministic false-positive check (Sections 4.1 and 5.1) independently of
-any LLM or random seed — running it will print the same 10/10 result every
-time.
+regenerates every table and the baseline-comparison numbers in Section 5
+directly from the raw JSON logs in `research/runs/`; nothing in this
+paper was hand-transcribed from a separate analysis. `research/
+regex_robustness.mjs` reproduces the deterministic false-positive check
+and its fix (Sections 4.1 and 5.1) independently of any LLM or random
+seed — running it will print the same 12/12 result every time.
+`research/naive_baseline_comparison.mjs` independently reproduces the
+baseline-comparison numbers by re-scanning every raw transcript directly.
+`research/hallucination_harness_noisy.mjs` reproduces the noisy-input
+condition (requires a running local Ollama instance, like the main
+harness).

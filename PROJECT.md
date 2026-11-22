@@ -395,6 +395,95 @@ Everything is paid in the real world, but we don't need to spend anything:
       LLM only, local STT/TTS) was actively rejected as scientifically
       messy — a condition that doesn't match anything else in the paper
       and is hard to interpret cleanly. **Removed from status.html.**
+- [x] **A12 — third-party review response (2026-11-23).** Aoun sent the
+      repo to Gemini (persona: strict IEEE reviewer) for an outside
+      opinion before actually messaging the prospective co-author. Got a
+      harsh-but-fair review: real engineering, honestly reported, but
+      3 genuine, previously-unaddressed gaps — (1) zero positive RQ2
+      detections undermines the "evaluating a detector" framing since
+      there's nothing to compute precision/recall against; (2) no
+      baseline comparison, and the heuristic only catches ONE specific
+      glued-turn signature; (3) RQ2 only ever tests clean, well-punctuated
+      caller text, never anything resembling noisy real ASR output. A
+      second Gemini pass (responding to Claude's own counter-analysis)
+      confirmed those 3 were the right priorities and flagged that
+      "noisy input will definitely produce positives" was an
+      overconfident claim — fair, and borne out: see below. Implemented
+      all 3, scoped tightly (not a full redesign):
+      1. **Regex fix for the "U.S." false-positive (category (b) from
+         the robustness check).** `firstSegmentEnd()` in `src/brain.js`
+         now recognizes a run of 2+ consecutive single-capital-letter-
+         plus-period tokens (e.g. "U.S.", "U.K.", "U.S.A.") and excludes
+         every period *internal* to that run from being treated as a
+         sentence boundary. Verified via `research/regex_robustness.mjs`
+         (expanded to 12 cases) and via `research/
+         naive_baseline_comparison.mjs` re-checking the fixed function
+         against all 87 already-collected raw transcripts: 0 false
+         positives on real model output. Deliberately did NOT attempt to
+         fix category (a) ("Dr.Smith", missing space after an ordinary
+         abbreviation) — not distinguishable from a genuine glued turn
+         using punctuation alone; documented as a permanent, known
+         limitation instead of a bug to chase.
+      2. **Baseline comparison.** Gemini's suggested baseline (`\nCaller:`
+         stop sequence) turned out not to apply to this system: it only
+         makes sense for raw completion-style prompting with role labels
+         baked into the text, and this `Brain` class uses the structured
+         chat-completions API — we checked every raw transcript collected
+         for this paper and never once saw an explicit role label before
+         a glued continuation (it's always unlabeled prose). Built the
+         actually-meaningful baseline instead: a naive "always cut after
+         the first sentence" rule, re-applied to all 87 real raw
+         transcripts via `research/naive_baseline_comparison.mjs`.
+         **Result: the naive rule would discard real content from 93.1%
+         of turns (81/87); the deployed heuristic, re-checked against the
+         same raw text, discards 0%.** A genuinely strong number for the
+         paper — turns "we built something clever" into a measured claim.
+      3. **Noisy-input RQ2 condition.** New
+         `research/hallucination_harness_noisy.mjs` (reuses
+         `hallucination_harness.mjs`'s exported `SCENARIOS`/`runScenario`
+         — had to add an `isMain` guard so importing it doesn't trigger a
+         full run) corrupts every scripted caller turn to approximate raw
+         ASR-style output (lowercase, punctuation stripped) before
+         feeding it to the LLM, honestly described as a low-cost
+         approximation of missing punctuation/capitalization cues, NOT a
+         full acoustic/ASR error model. Run against both local models
+         (`llama3:8b`, `qwen2.5:7b`), both temperatures, both
+         `singleSegment` modes.
+      **Result: 59 more real turns, 0 more triggers — RQ2's combined
+      total is now 0/144 across both conditions.** Manually verified
+      every noisy-input raw reply (same discipline as A3/B1) — genuinely
+      clean, no missed self-dialogue. Updated binomial-probability
+      numbers with the larger n: 0.99^144≈23.5%, 0.98^144≈5.5%,
+      0.95^144≈0.06% (meaningfully tighter than the old n=85 numbers,
+      1-2% true rates remain entirely plausible). Reran the baseline
+      comparison across all 144 raw transcripts (clean+noisy combined):
+      **naive rule damages 135/144 (93.8%); deployed heuristic damages
+      0/144 (0.0%).** `research/analyze_results.mjs` updated to keep
+      clean vs. noisy conditions as separate totals (not silently
+      pooled, since they use different input text and model subsets) —
+      the noisy-condition filename prefix would otherwise have matched
+      the same generic regex and gotten merged into the main "85" total
+      without anyone noticing.
+      **Bonus finding while reviewing the noisy transcripts:** the
+      doctor-name-fabrication pattern from B1 reproduced strongly under
+      noisy input too — rechecked ALL applicable instances across both
+      conditions (10 total from local models): **8/10 fabricated an
+      invented physician name as fact, 2/10 gave an evasive non-answer,
+      0/10 gave a clean "I don't know."** Updated the paper's Results
+      5.1 to report this stronger, fuller count instead of the earlier
+      3-of-4 figure (which was clean-condition only). Production model
+      (tested only in the clean condition) still 4/4 correctly declining
+      — explicitly flagged in the paper that we can't claim it would
+      hold up under noisy input too, since it wasn't tested there (no
+      OpenRouter key available this session to extend that condition).
+      All of A12's `paper.md` updates done: Abstract, Contributions,
+      Methodology 4.1 (fix/baseline/noisy paragraphs), Results 5.1 (both
+      new subsections filled in with final numbers), Discussion's
+      binomial-probability paragraph, Threats to Validity (Internal and
+      External), Future Work (removed now-done fix item, added ASR-noise
+      and real-deployment follow-ups), Conclusion, Reproducibility
+      statement. `research/RESULTS.md` regenerated and confirmed to
+      match every number cited in the paper.
 
 ### B — Aoun does these
 - [x] **B1.** **Done 2026-11-22 — delegated to Claude ("do it").** Spot-
@@ -479,6 +568,8 @@ don't let it go stale.
 | `gpt-oss:20b` Ollama model pull (the real production model) | attempted 2026-11-16, **aborted** | 0GB (was going to be ~13GB) | N/A — never completed | Already cleaned up — see errors log |
 | OpenRouter API key (Aoun's own, $0.50 limit) | used 2026-11-22 | ~$0.01-0.05 of real spend (well under the $0.50 limit) — the only non-zero cost in this entire project | New, for this project — used only as an ephemeral shell env var, never written to any file or committed | No further cleanup needed — key was never persisted anywhere, nothing to delete |
 | `research/runs/openai_gpt-oss-20b__temp-{0.4,0.8}__singleSegment-{true,false}.json` (4 files) | created 2026-11-22 | small (text), committed to git | New | No — keep, real experimental data |
+| `research/runs/noisy__{llama3_8b,qwen2.5_7b}__temp-{0.4,0.8}__singleSegment-{true,false}.json` (8 files) | created 2026-11-23 (A12) | small (text), committed to git | New | No — keep, real experimental data |
+| `research/hallucination_harness_noisy.mjs`, `research/naive_baseline_comparison.mjs` | created 2026-11-23 (A12) | small (text) | New | No — reproducibility scripts, keep |
 
 Errors log (append here as they happen, don't lose this context):
 - **2026-11-16 — `gpt-oss:20b` pull aborted.** Tried pulling the actual
@@ -667,3 +758,32 @@ the outreach-message file, plus earlier commits). Fully scrubbing that
 would require rewriting git history and force-pushing, which wasn't
 done without Aoun's explicit go-ahead since it's a destructive operation
 on a shared/public remote.
+
+**2026-11-23, A12 — response to a second outside review (Gemini, strict
+IEEE reviewer persona).** Before sending anything to the prospective
+co-author, Aoun ran the repo past Gemini for an independent critique.
+Verdict: real, honest engineering, but 3 genuine technical gaps a strict
+reviewer would attack — see A12 above for the full breakdown. Claude's
+own counter-analysis agreed with the gaps but pushed back on Gemini's
+claim that the RQ1 latency comparison was still a problem (already
+addressed in the paper) and flagged that "noisy input will definitely
+produce positives" was overconfident; a second Gemini pass agreed with
+both corrections. Aoun asked for advice, got a clear recommendation
+("fix first, then send"), and said to do it. **All 3 fixes done and
+validated the same session** (regex fix for the "U.S." false positive;
+a baseline comparison against a naive "always cut after first sentence"
+rule, since Gemini's suggested `\nCaller:` stop-sequence baseline turned
+out not to apply to this system's actual failure signature; a
+noisy-input RQ2 condition approximating raw ASR-style text). Combined
+result: **RQ2 total now 0/144** (up from 0/85), baseline comparison
+shows the deployed heuristic preserves content in 144/144 real
+transcripts vs. 135/144 damaged by a naive rule, and the doctor-name
+fabrication secondary finding strengthened from 3/4 to 8/10 with the
+added data. `paper.md` fully propagated — see A12 above for the complete
+list of sections touched. This is a genuinely stronger paper than before
+the second review, and Aoun did not have to use a single additional
+dollar of API cost (everything ran on the already-installed local
+models).
+
+**Next action after A12: still B4** — send the message (now backed by a
+materially stronger paper) whenever ready.

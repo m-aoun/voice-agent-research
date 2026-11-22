@@ -11,6 +11,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { firstSegmentEnd } from '../src/brain.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const runsDir = path.join(__dirname, 'runs');
@@ -21,20 +22,28 @@ function loadJSON(name) {
 
 // ---------- RQ2: self-dialogue hallucination ----------
 // Any run file matching the hallucination-harness naming convention
-// (model__temp-X__singleSegment-Y.json), generically — not hardcoded to
-// specific model names, so a newly tested model is picked up automatically.
-const rq2Files_ = fs.readdirSync(runsDir).filter((f) => /^.+__temp-[\d.]+__singleSegment-(true|false)\.json$/.test(f));
+// (model__temp-X__singleSegment-Y.json, optionally prefixed "noisy__" for
+// the noisy-input condition), generically — not hardcoded to specific model
+// names, so a newly tested model is picked up automatically. The clean and
+// noisy-input conditions are kept as SEPARATE totals (different input text,
+// different model subset) rather than silently pooled into one number.
+const rq2Files_ = fs.readdirSync(runsDir).filter((f) => /^(noisy__)?.+__temp-[\d.]+__singleSegment-(true|false)\.json$/.test(f));
 
 let rq2Rows = [];
+let rq2NoisyRows = [];
 let rq2TotalTurns = 0;
 let rq2TotalTruncated = 0;
 let rq2TotalErrors = 0;
+let rq2NoisyTotalTurns = 0;
+let rq2NoisyTotalTruncated = 0;
+let rq2NoisyTotalErrors = 0;
 
 for (const file of rq2Files_) {
   const data = loadJSON(file);
-  const m = file.match(/^(.+?)__temp-([\d.]+)__singleSegment-(true|false)\.json$/);
+  const m = file.match(/^(noisy__)?(.+?)__temp-([\d.]+)__singleSegment-(true|false)\.json$/);
   if (!m) continue;
-  const [, model, temp, mode] = m;
+  const [, noisyPrefix, model, temp, mode] = m;
+  const isNoisy = Boolean(noisyPrefix);
   let turns = 0;
   let truncated = 0;
   let errors = 0;
@@ -45,11 +54,36 @@ for (const file of rq2Files_) {
       if (t.truncatedBySingleSegment) truncated++;
     }
   }
-  rq2Rows.push({ model, temp, mode, turns, truncated, errors });
+  (isNoisy ? rq2NoisyRows : rq2Rows).push({ model, temp, mode, turns, truncated, errors });
   if (mode === 'true') {
-    rq2TotalTurns += turns;
-    rq2TotalTruncated += truncated;
-    rq2TotalErrors += errors;
+    if (isNoisy) {
+      rq2NoisyTotalTurns += turns;
+      rq2NoisyTotalTruncated += truncated;
+      rq2NoisyTotalErrors += errors;
+    } else {
+      rq2TotalTurns += turns;
+      rq2TotalTruncated += truncated;
+      rq2TotalErrors += errors;
+    }
+  }
+}
+
+// ---------- RQ2 baseline comparison (naive "always cut after first
+// sentence" rule vs. the deployed heuristic, re-applied to every raw,
+// uncut transcript collected — clean and noisy-input conditions alike) ----------
+const rawFiles = fs.readdirSync(runsDir).filter((f) => /singleSegment-false\.json$/.test(f));
+let baselineTotalTurns = 0;
+let baselineNaiveDamaged = 0;
+let baselineHeuristicCuts = 0;
+for (const file of rawFiles) {
+  const data = loadJSON(file);
+  for (const scenarioTurns of Object.values(data)) {
+    for (const t of scenarioTurns) {
+      if (t.error) continue;
+      baselineTotalTurns++;
+      if ((t.spokenSentences?.length ?? 1) >= 2) baselineNaiveDamaged++;
+      if (firstSegmentEnd(t.rawReplyText) !== -1) baselineHeuristicCuts++;
+    }
   }
 }
 
@@ -76,6 +110,27 @@ out += `
 **Total: ${rq2TotalTruncated}/${rq2TotalTurns} turns triggered the self-dialogue cut** across all three models, both temperatures (${rq2TotalErrors} experiment errors).
 
 Manually spot-checked raw (singleSegment=false) replies — confirmed true negatives (the models produced single, well-formed turns; no invented caller dialogue), not missed detections by the heuristic.
+
+## RQ2, noisy-input condition (caller turns lowercased, punctuation stripped, approximating raw ASR-style output — 2 local models only)
+
+| Model | Temperature | Turns | Self-dialogue cuts triggered |
+|---|---|---|---|
+`;
+
+for (const r of rq2NoisyRows.filter((r) => r.mode === 'true')) {
+  out += `| ${r.model} | ${r.temp} | ${r.turns} | ${r.truncated} |\n`;
+}
+
+out += `
+**Total: ${rq2NoisyTotalTruncated}/${rq2NoisyTotalTurns} turns triggered the self-dialogue cut** under noisy input (${rq2NoisyTotalErrors} experiment errors).
+
+**Combined total across both conditions: ${rq2TotalTruncated + rq2NoisyTotalTruncated}/${rq2TotalTurns + rq2NoisyTotalTurns} turns.**
+
+## RQ2 baseline comparison (naive "always cut after first sentence" rule vs. the deployed heuristic, re-applied to every raw transcript collected — clean and noisy-input conditions combined)
+
+- Raw (uncut) turns inspected: **${baselineTotalTurns}**
+- Naive rule would discard real content from: **${baselineNaiveDamaged}/${baselineTotalTurns} (${(100 * baselineNaiveDamaged / baselineTotalTurns).toFixed(1)}%)**
+- Deployed GLUED_SEGMENT heuristic, re-applied to the same raw text, would incorrectly cut: **${baselineHeuristicCuts}/${baselineTotalTurns} (${(100 * baselineHeuristicCuts / baselineTotalTurns).toFixed(1)}%)**
 
 ## RQ1 — Latency (milliseconds, p50 / p90, n=${rq1Summaries[0]?.n ?? '?'} turns per model + 1 discarded warm-up turn)
 

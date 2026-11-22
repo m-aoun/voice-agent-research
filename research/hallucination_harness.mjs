@@ -98,6 +98,8 @@ const SCENARIOS = [
   },
 ];
 
+export { SYSTEM_PROMPT, SCENARIOS, makeLogger, runScenario };
+
 const MODELS = (process.env.HARNESS_MODELS || 'llama3:8b').split(',').map((s) => s.trim()).filter(Boolean);
 const TEMPERATURES = (process.env.HARNESS_TEMPERATURES || '0.4').split(',').map((s) => Number(s.trim())).filter((n) => !Number.isNaN(n));
 
@@ -174,7 +176,14 @@ async function main() {
   }
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only run main() when this file is executed directly (`node
+// research/hallucination_harness.mjs`), not when another script imports
+// SCENARIOS/SYSTEM_PROMPT/runScenario/makeLogger from it (e.g.
+// research/hallucination_harness_noisy.mjs).
+const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(fileURLToPath(import.meta.url));
+if (isMain) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

@@ -67,11 +67,43 @@ const MARKERS = {
  *
  * This is RQ2's subject: a lightweight, deployed-in-production heuristic for
  * detecting self-dialogue hallucination in a live LLM voice agent.
+ *
+ * Fix (see paper Section 5.1/8): a multi-letter, all-capital dotted
+ * abbreviation ("U.S.", "U.K.", "U.N.", "U.S.A.") is a run of single
+ * capital letters each followed by a period with nothing in between
+ * ("U", ".", "S", "."), so its own INTERNAL period (the one between "U"
+ * and "S") is indistinguishable from a genuine sentence boundary by the
+ * base rule alone — it is a period immediately followed by a capital
+ * letter, exactly what the rule is looking for. ABBREV_RUN finds these
+ * runs; every period inside one except the run's own final period (which
+ * is where the abbreviation actually ends, and can still legitimately mark
+ * a real boundary) is excluded from consideration. This does NOT fix the
+ * separate, different false-positive case of a missing space after an
+ * ordinary abbreviation (e.g. "Dr.Smith") — that remains a known,
+ * documented, unfixed limitation (see research/regex_robustness.mjs);
+ * there is no way to distinguish that case from a genuine glued turn using
+ * punctuation alone.
  */
-const GLUED_SEGMENT = /[.?!]["')\]]?(?=[A-Z])/;
+const GLUED_SEGMENT = /[.?!]["')\]]?(?=[A-Z])/g;
+const ABBREV_RUN = /(?:[A-Z]\.){2,}/g;
 export function firstSegmentEnd(text) {
-  const m = GLUED_SEGMENT.exec(text);
-  return m ? m.index + m[0].length : -1;
+  const protectedPeriods = new Set();
+  ABBREV_RUN.lastIndex = 0;
+  let am;
+  while ((am = ABBREV_RUN.exec(text))) {
+    const run = am[0]; // e.g. "U.S." or "U.S.A."
+    for (let i = 0; i < run.length - 1; i++) {
+      if (run[i] === '.') protectedPeriods.add(am.index + i);
+    }
+  }
+
+  GLUED_SEGMENT.lastIndex = 0;
+  let m;
+  while ((m = GLUED_SEGMENT.exec(text))) {
+    if (protectedPeriods.has(m.index)) continue; // internal to an abbreviation run, not a real boundary
+    return m.index + m[0].length;
+  }
+  return -1;
 }
 
 /** Where a sentence can safely be handed to the voice, mid-stream. */
@@ -224,8 +256,11 @@ export class Brain {
         if (onFirstToken && full === '' && spoken === '') onFirstToken();
 
         if (this.singleSegment) {
-          // Look a few characters back so a boundary split across two chunks is still seen.
-          const from = Math.max(0, full.length - 3);
+          // Look several characters back so a boundary split across two chunks
+          // is still seen, AND so the CAPS_DOT_RUN abbreviation guard above has
+          // enough context to recognize something like "U.S.A." (6 chars) even
+          // if most of it arrived in an earlier chunk.
+          const from = Math.max(0, full.length - 10);
           const cut = firstSegmentEnd((full + delta).slice(from));
           if (cut !== -1) {
             const keep = (full + delta).slice(0, from + cut);

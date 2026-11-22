@@ -1,0 +1,211 @@
+{
+  "booking-simple": [
+    {
+      "userTurn": "hi i'd like to book an appointment for a check-up",
+      "rawReplyText": "We can definitely help you schedule a check-up. When were you thinking of coming in? We have availability Monday through Saturday, and same-week appointments are usually available if needed.",
+      "spokenSentences": [
+        "We can definitely help you schedule a check-up.",
+        "When were you thinking of coming in?",
+        "We have availability Monday through Saturday, and same-week appointments are usually available if needed."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "does tuesday afternoon work",
+      "rawReplyText": "Tuesday afternoons are available. What time on Tuesday would you prefer? Our hours are 9am-5pm, so we could schedule a appointment between those times.",
+      "spokenSentences": [
+        "Tuesday afternoons are available.",
+        "What time on Tuesday would you prefer?",
+        "Our hours are 9am-5pm, so we could schedule a appointment between those times."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "my name is john smith phone is 555-123-4567",
+      "rawReplyText": "John Smith with phone number 555-123-4567. Let me just confirm your appointment for Tuesday afternoon at... (checks the calendar) ...2:30pm? That work for you?",
+      "spokenSentences": [
+        "John Smith with phone number 555-123-4567.",
+        "Let me just confirm your appointment for Tuesday afternoon at...",
+        "(checks the calendar) ...",
+        "2:30pm?",
+        "That work for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "insurance-question": [
+    {
+      "userTurn": "do you accept blue cross insurance",
+      "rawReplyText": "Yes, we do accept Blue Cross insurance here at Lakeview Family Clinic. Would you like to schedule an appointment or ask about availability?",
+      "spokenSentences": [
+        "Yes, we do accept Blue Cross insurance here at Lakeview Family Clinic.",
+        "Would you like to schedule an appointment or ask about availability?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "okay and how much would a regular visit cost without insurance",
+      "rawReplyText": "Our standard office visit fee is $75 without insurance coverage.",
+      "spokenSentences": [
+        "Our standard office visit fee is $75 without insurance coverage."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "reschedule": [
+    {
+      "userTurn": "i need to reschedule my appointment from friday",
+      "rawReplyText": "Let me see what's available. Can I confirm if you're looking for an earlier or later time on Friday? If not, we can explore other days that work best for you.",
+      "spokenSentences": [
+        "Let me see what's available.",
+        "Can I confirm if you're looking for an earlier or later time on Friday?",
+        "If not, we can explore other days that work best for you."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "can we move it to the following monday morning instead",
+      "rawReplyText": "I've checked our schedule and Monday morning is available. Would 9am or 10am work better for you?",
+      "spokenSentences": [
+        "I've checked our schedule and Monday morning is available.",
+        "Would 9am or 10am work better for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "thanks that works for me",
+      "rawReplyText": "I've updated your appointment for Monday at either 9am or 10am - whichever time you prefer, please confirm with me now.",
+      "spokenSentences": [
+        "I've updated your appointment for Monday at either 9am or 10am - whichever time you prefer, please confirm with me now."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "angry-caller": [
+    {
+      "userTurn": "i've been waiting all week for someone to call me back about my prescription refill",
+      "rawReplyText": "Sorry to hear that you're experiencing some frustration! Lakeview Family Clinic didn't receive a request from you regarding a prescription refill, but I'd be happy to help facilitate that process now. Can you please confirm your name and the medication you need refilled?",
+      "spokenSentences": [
+        "Sorry to hear that you're experiencing some frustration!",
+        "Lakeview Family Clinic didn't receive a request from you regarding a prescription refill, but I'd be happy to help facilitate that process now.",
+        "Can you please confirm your name and the medication you need refilled?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "this is the third time i'm calling about this nobody is helping me",
+      "rawReplyText": "I apologize for any inconvenience or frustration caused. Let's start fresh! I'm here to assist you with your prescription refill request. To better help you, can you please provide your name and confirm which medication needs refilling?",
+      "spokenSentences": [
+        "I apologize for any inconvenience or frustration caused.",
+        "Let's start fresh!",
+        "I'm here to assist you with your prescription refill request.",
+        "To better help you, can you please provide your name and confirm which medication needs refilling?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "fine just make sure someone calls me back today",
+      "rawReplyText": "I've taken note of your request for a call-back regarding your prescription refill. Someone from our team will get in touch with you today to address the issue. Would you like me to schedule an appointment or resolve this over the phone?",
+      "spokenSentences": [
+        "I've taken note of your request for a call-back regarding your prescription refill.",
+        "Someone from our team will get in touch with you today to address the issue.",
+        "Would you like me to schedule an appointment or resolve this over the phone?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "ambiguous-multi-ask": [
+    {
+      "userTurn": "hi quick questions are you open on weekends and do you do walk-ins and also do you do flu shots",
+      "rawReplyText": "Hello! The Lakeview Family Clinic is open on Saturday from 9am-1pm, but we're closed on Sundays. No, we don't typically accept walk-ins, as our goal is to ensure timely appointments for all patients. As for the flu shot, yes, we do offer vaccinations and can administer them during your scheduled appointment.",
+      "spokenSentences": [
+        "Hello!",
+        "The Lakeview Family Clinic is open on Saturday from 9am-1pm, but we're closed on Sundays.",
+        "No, we don't typically accept walk-ins, as our goal is to ensure timely appointments for all patients.",
+        "As for the flu shot, yes, we do offer vaccinations and can administer them during your scheduled appointment."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "rambling-caller": [
+    {
+      "userTurn": "so my daughter has this thing where she gets these headaches sometimes and i don't know if it's the allergies acting up again because it's that time of year or if it's something else and also she mentioned her ear hurts a little and i wasn't sure if that's related or if i should just bring her in for both and honestly i'm not even sure which doctor she saw last time",
+      "rawReplyText": "I'd be happy to help! For your daughter's headaches and ear pain, it sounds like she might benefit from an appointment with one of our family medicine physicians. We can schedule a same-week appointment if needed. Would you like me to find out who her previous doctor was so we can try to have the same provider see her again?",
+      "spokenSentences": [
+        "I'd be happy to help!",
+        "For your daughter's headaches and ear pain, it sounds like she might benefit from an appointment with one of our family medicine physicians.",
+        "We can schedule a same-week appointment if needed.",
+        "Would you like me to find out who her previous doctor was so we can try to have the same provider see her again?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "okay so could you check if dr patel is the one who saw her in like march or april i don't remember exactly and if not just whoever is free i guess as long as it's this week ideally",
+      "rawReplyText": "I've checked on our schedule. Dr. Patel was actually your daughter's provider last time she visited, but unfortunately, he has a packed schedule for the rest of the week. However, I do have an opening with one of our other family medicine physicians available today or tomorrow. Would you like me to book that appointment?",
+      "spokenSentences": [
+        "I've checked on our schedule.",
+        "Dr.",
+        "Patel was actually your daughter's provider last time she visited, but unfortunately, he has a packed schedule for the rest of the week.",
+        "However, I do have an opening with one of our other family medicine physicians available today or tomorrow.",
+        "Would you like me to book that appointment?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "rapid-topic-switch": [
+    {
+      "userTurn": "quick one can i get a referral letter faxed over actually wait before that do you guys do blood work on-site or do i have to go somewhere else oh and also is parking free there",
+      "rawReplyText": "We do offer lab draws (blood work) right here at our clinic, so no need to go elsewhere for that. As for parking, I'm happy to let you know that it's actually free in our designated lot.",
+      "spokenSentences": [
+        "We do offer lab draws (blood work) right here at our clinic, so no need to go elsewhere for that.",
+        "As for parking, I'm happy to let you know that it's actually free in our designated lot."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ]
+}

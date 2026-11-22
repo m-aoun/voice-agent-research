@@ -1,0 +1,168 @@
+{
+  "booking-simple": [
+    {
+      "userTurn": "hi i'd like to book an appointment for a check-up",
+      "rawReplyText": "I'd be happy to help you schedule a check-up! We accept new patients and usually have same-week appointments available. What day and time works best for you?",
+      "spokenSentences": [
+        "I'd be happy to help you schedule a check-up!",
+        "We accept new patients and usually have same-week appointments available.",
+        "What day and time works best for you?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "insurance-question": [
+    {
+      "userTurn": "do you accept blue cross insurance",
+      "rawReplyText": "Yes, we do accept Blue Cross insurance!",
+      "spokenSentences": [
+        "Yes, we do accept Blue Cross insurance!"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "okay and how much would a regular visit cost without insurance",
+      "rawReplyText": "Our standard visit fee is $50.",
+      "spokenSentences": [
+        "Our standard visit fee is $50."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "reschedule": [
+    {
+      "userTurn": "i need to reschedule my appointment from friday",
+      "rawReplyText": "Let me see what's available. Can I have your name and the original time of your Friday appointment?",
+      "spokenSentences": [
+        "Let me see what's available.",
+        "Can I have your name and the original time of your Friday appointment?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "can we move it to the following monday morning instead",
+      "rawReplyText": "I've checked our schedule, and yes, we do have availability on Monday morning. Would you like to confirm a new time for then?",
+      "spokenSentences": [
+        "I've checked our schedule, and yes, we do have availability on Monday morning.",
+        "Would you like to confirm a new time for then?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "thanks that works for me",
+      "rawReplyText": "I've updated your appointment. You're all set for Monday morning.",
+      "spokenSentences": [
+        "I've updated your appointment.",
+        "You're all set for Monday morning."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "angry-caller": [
+    {
+      "userTurn": "i've been waiting all week for someone to call me back about my prescription refill",
+      "rawReplyText": "I'm happy to help you with that! Can you please provide me with your name and the date you originally called in for the refill? I'll check on its status for you.",
+      "spokenSentences": [
+        "I'm happy to help you with that!",
+        "Can you please provide me with your name and the date you originally called in for the refill?",
+        "I'll check on its status for you."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ],
+  "ambiguous-multi-ask": [
+    {
+      "userTurn": "hi quick questions are you open on weekends and do you do walk-ins and also do you do flu shots",
+      "rawReplyText": "Hi! We're open on Saturdays from 9am-1pm, but closed Sundays. We don't typically take walk-ins, as we prefer to schedule appointments in advance. However, same-week appointments are usually available for new patients.\n\nRegarding flu shots, yes, we do offer them at the clinic!",
+      "spokenSentences": [
+        "Hi!",
+        "We're open on Saturdays from 9am-1pm, but closed Sundays.",
+        "We don't typically take walk-ins, as we prefer to schedule appointments in advance.",
+        "However, same-week appointments are usually available for new patients.\n\nRegarding flu shots, yes, we do offer them at the clinic!"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "okay and if i came in today for a flu shot about how long is the wait usually",
+      "rawReplyText": "If you come in today for a flu shot, our typical wait time is minimal. We try to keep our schedule flexible, so most patients can get seen within 15-30 minutes of their appointment start time.",
+      "spokenSentences": [
+        "If you come in today for a flu shot, our typical wait time is minimal.",
+        "We try to keep our schedule flexible, so most patients can get seen within 15-30 minutes of their appointment start time."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "rambling-caller": [
+    {
+      "userTurn": "so my daughter has this thing where she gets these headaches sometimes and i don't know if it's the allergies acting up again because it's that time of year or if it's something else and also she mentioned her ear hurts a little and i wasn't sure if that's related or if i should just bring her in for both and honestly i'm not even sure which doctor she saw last time",
+      "rawReplyText": "I'd be happy to help. For your daughter's headaches and ear pain, it sounds like a good idea to schedule an appointment at our clinic. We can take a look at what might be causing these issues and provide guidance on how to manage them. Would you like me to book an appointment for her?",
+      "spokenSentences": [
+        "I'd be happy to help.",
+        "For your daughter's headaches and ear pain, it sounds like a good idea to schedule an appointment at our clinic.",
+        "We can take a look at what might be causing these issues and provide guidance on how to manage them.",
+        "Would you like me to book an appointment for her?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    },
+    {
+      "userTurn": "okay so could you check if dr patel is the one who saw her in like march or april i don't remember exactly and if not just whoever is free i guess as long as it's this week ideally",
+      "rawReplyText": "Let me check on that for you. (pause) Okay, I've checked our records, and Dr. Patel did see your daughter in March. However, she has a full schedule for the rest of the week. But don't worry, we have other great doctors available who can see her this week. Would you like me to book an appointment with one of them?",
+      "spokenSentences": [
+        "Let me check on that for you.",
+        "(pause) Okay, I've checked our records, and Dr.",
+        "Patel did see your daughter in March.",
+        "However, she has a full schedule for the rest of the week.",
+        "But don't worry, we have other great doctors available who can see her this week.",
+        "Would you like me to book an appointment with one of them?"
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": null,
+      "flag": null
+    }
+  ],
+  "rapid-topic-switch": [
+    {
+      "userTurn": "quick one can i get a referral letter faxed over actually wait before that do you guys do blood work on-site or do i have to go somewhere else oh and also is parking free there",
+      "rawReplyText": "We do offer lab draws on-site here at Lakeview Family Clinic, so you wouldn't need to go anywhere else for that. And as for parking, it's free in our lot.",
+      "spokenSentences": [
+        "We do offer lab draws on-site here at Lakeview Family Clinic, so you wouldn't need to go anywhere else for that.",
+        "And as for parking, it's free in our lot."
+      ],
+      "truncatedBySingleSegment": false,
+      "transfer": false,
+      "end": "done",
+      "flag": null
+    }
+  ]
+}
